@@ -1,7 +1,7 @@
 #pragma once
 
-#include "builder-helper.h"
-#include "sex/util/fd-holder.h"
+#include "builder-helper.hpp"
+#include "sex/util/fd-holder.hpp"
 
 #include <filesystem>
 #include <string>

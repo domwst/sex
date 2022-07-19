@@ -1,4 +1,4 @@
-#include "cgroup-controller.h"
+#include "cgroup-controller.hpp"
 
 #include <filesystem>
 #include <fstream>
@@ -19,4 +19,3 @@ namespace {
         }
     } cgroup_initialiser;
 }
-
