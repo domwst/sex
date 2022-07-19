@@ -10,3 +10,4 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "bin")
 include(cmake/sanitizers.cmake)
 
 add_subdirectory(sex)
+add_subdirectory(third_party)
