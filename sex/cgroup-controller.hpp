@@ -3,6 +3,8 @@
 #include "builder-helper.hpp"
 #include "sex/util/fd-holder.hpp"
 
+#include <sex/util/source_location.hpp>
+
 #include <filesystem>
 #include <string>
 #include <string_view>
