@@ -7,7 +7,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "bin")
 
-include(cmake/sanitizers.cmake)
+add_compile_options(-Wall -Wextra -Wpedantic -g -fno-omit-frame-pointer)
 
 add_subdirectory(sex)
 add_subdirectory(third_party)
