@@ -1,6 +1,7 @@
 #include "fd-holder.hpp"
 
-#include <cstring>
+#include <sex/detail/syscall.hpp>
+
 #include <iostream>
 #include <unistd.h>
 
@@ -25,9 +26,7 @@ int FdHolder::get() const noexcept {
 
 void FdHolder::reset(int new_fd) noexcept {
     if (fd_ != NeutralValue) {
-        if (close(fd_) < 0) {
-            std::cerr << "close failed: " << strerror(errno) << std::endl;
-        }
+      SYSCALL(close(fd_));
     }
     fd_ = new_fd;
 }
