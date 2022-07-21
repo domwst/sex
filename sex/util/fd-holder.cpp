@@ -6,7 +6,9 @@
 #include <unistd.h>
 
 FdHolder::FdHolder(int fd) noexcept : fd_(fd) {}
+
 FdHolder::FdHolder() noexcept : FdHolder(NeutralValue) {}
+
 FdHolder::FdHolder(FdHolder&& other) noexcept : FdHolder() {
     swap(other);
 }
