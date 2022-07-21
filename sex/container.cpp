@@ -2,9 +2,9 @@
 
 #include <sex/util/once.hpp>
 
-#include <iostream>
+#include <sex/detail/syscall.hpp>
+
 #include <unistd.h>
-#include <cstring>
 
 const fs::path Container::TmpSbox = fs::temp_directory_path() / "sbox";
 
@@ -27,14 +27,8 @@ Container::Container(const std::string& name) : ContainerPath_(TmpSbox / name) {
 }
 
 void Container::Enter() const {
-    if (chroot(GetPath().c_str()) < 0) {
-        std::cerr << "Failed to chroot: " << strerror(errno) << std::endl;
-        _exit(127);
-    }
-    if (chdir("/") < 0) {
-        std::cerr << "Failed to chdir: " << strerror(errno) << std::endl;
-        _exit(127);
-    }
+    SYSCALL(chroot(GetPath().c_str()));
+    SYSCALL(chdir("/"));
 }
 
 const fs::path& Container::GetPath() const {

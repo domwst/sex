@@ -2,6 +2,8 @@
 
 #include <sex/util/once.hpp>
 
+#include <sex/detail/syscall.hpp>
+
 #include <cstring>
 #include <fcntl.h>
 #include <fstream>
@@ -77,13 +79,8 @@ void CgroupController::CgroupKill() {
 }
 
 FdHolder CgroupController::GetCgroupFd() const {
-    int fd = open(GetCgroupPath().c_str(), O_PATH | O_RDONLY | O_CLOEXEC);
-    if (fd == -1) {
-        std::cerr << "Failed to open cgroup directory [" << GetCgroupPath() << "]: "
-            << strerror(errno) << std::endl;
-        return FdHolder();
-    }
-    return FdHolder(fd);
+    FdHolder fd = SYSCALL(open(GetCgroupPath().c_str(), O_PATH | O_RDONLY | O_CLOEXEC));
+    return fd;
 }
 
 CgroupController::~CgroupController() {
