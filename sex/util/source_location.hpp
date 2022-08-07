@@ -11,7 +11,7 @@ class SourceLocation {
   SourceLocation() noexcept = default;
 
   // Should be defined in the same translation unit for consteval to work
-  static constexpr SourceLocation Current(
+  static consteval SourceLocation Current(
     size_t line = __builtin_LINE(),
     std::string_view function = __builtin_FUNCTION(),
     std::string_view filename = __builtin_FILE()
