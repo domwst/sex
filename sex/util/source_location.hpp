@@ -15,7 +15,7 @@ class SourceLocation {
     size_t line = __builtin_LINE(),
     std::string_view function = __builtin_FUNCTION(),
     std::string_view filename = __builtin_FILE()
-    ) {
+    ) noexcept {
     return {line, function, filename};
   }
 
