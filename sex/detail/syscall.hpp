@@ -16,7 +16,7 @@
 #define SEX_ASSERT(expr)                                          \
 do {                                                              \
   if (SEX_UNLIKELY(!(expr))) {                                    \
-    util::Panic(fmt::format("{:s} is not satisfied", #expr));     \
+    ::sex::util::Panic(fmt::format("{:s} is not satisfied", #expr));     \
   }                                                               \
 } while (0)
 
