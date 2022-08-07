@@ -11,3 +11,7 @@ add_compile_options(-Wall -Wextra -Wpedantic -g -fno-omit-frame-pointer)
 
 add_subdirectory(sex)
 add_subdirectory(third_party)
+
+if (SEX_DEVELOPER)
+    add_subdirectory(tests)
+endif()
