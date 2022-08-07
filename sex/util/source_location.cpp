@@ -9,10 +9,6 @@ constexpr size_t SourceLocation::Line() const {
   return line_;
 }
 
-constexpr size_t SourceLocation::Column() const {
-  return column_;
-}
-
 constexpr std::string_view SourceLocation::Filename() const {
   return filename_;
 }
