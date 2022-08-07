@@ -23,6 +23,7 @@ void Initialize() {
 }
 
 Container::Container(const std::string& name) : ContainerPath_(TmpSbox / name) {
+  Initialize();
     fs::create_directory(ContainerPath_);
 }
 
