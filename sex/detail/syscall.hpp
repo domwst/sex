@@ -8,7 +8,7 @@
 #include <string_view>
 #include <cstring>
 
-#define SYSCALL(expr) ::sex::detail::SyscallResult(#expr, expr)
+#define SEX_SYSCALL(expr) ::sex::detail::SyscallResult(#expr, expr)
 
 #define SEX_LIKELY(expr) __builtin_expect((expr), 1)
 #define SEX_UNLIKELY(expr) !SEX_LIKELY(!(expr))

@@ -28,8 +28,8 @@ Container::Container(const std::string& name) : ContainerPath_(TmpSbox / name) {
 }
 
 void Container::Enter() const {
-    SYSCALL(chroot(GetPath().c_str()));
-    SYSCALL(chdir("/"));
+    SEX_SYSCALL(chroot(GetPath().c_str()));
+    SEX_SYSCALL(chdir("/"));
 }
 
 const fs::path& Container::GetPath() const {

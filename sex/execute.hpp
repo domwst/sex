@@ -49,7 +49,7 @@ struct Default : None {
   }
 
   void CreateUidGidMappings() const {
-    SYSCALL(prctl(PR_SET_DUMPABLE, 1, 42, 42, 42));
+    SEX_SYSCALL(prctl(PR_SET_DUMPABLE, 1, 42, 42, 42));
 
     SEX_ASSERT(std::ofstream("/proc/self/uid_map") << "0 " << previous_uid_ << " 1");
     SEX_ASSERT(std::ofstream("/proc/self/setgroups") << "deny");
@@ -102,7 +102,7 @@ class ProcessKnob {
 
   ExitStatus Wait() && {  // NOLINT
     int status;
-    SEX_ASSERT(SYSCALL(waitpid(pid_, &status, __WALL)) == pid_);
+    SEX_ASSERT(SEX_SYSCALL(waitpid(pid_, &status, __WALL)) == pid_);
     return ExitStatus(status);
   }
 
@@ -223,7 +223,7 @@ ProcessKnob Execute(F&& f, ExecuteArgs args, Hooks&& hooks) {
 
   hooks.BeforeClone(cl_args);
 
-  pid_t child_pid = SYSCALL(syscall(SYS_clone3, &cl_args, sizeof(cl_args)));
+  pid_t child_pid = SEX_SYSCALL(syscall(SYS_clone3, &cl_args, sizeof(cl_args)));
 
   if (child_pid == 0) {
     hooks.AfterCloneChild(cl_args);

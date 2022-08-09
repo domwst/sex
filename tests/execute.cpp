@@ -44,7 +44,7 @@ static ut::suite execute = [] {
 
   "signal_suicide"_test = [] {
     auto handle = sex::Execute([] {
-      SYSCALL(kill(getpid(), SIGTERM));
+      SEX_SYSCALL(kill(getpid(), SIGTERM));
     }, {});
 
     auto status = std::move(handle).Wait();
@@ -62,7 +62,7 @@ static ut::suite execute = [] {
 
   "correct_pid_in_knob"_test = [] {
     int fd[2];
-    SYSCALL(pipe(fd));
+    SEX_SYSCALL(pipe(fd));
 
     auto handle = sex::Execute([fd] {
       int pid = getpid();

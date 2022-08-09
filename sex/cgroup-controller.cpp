@@ -79,7 +79,7 @@ void CgroupController::CgroupKill() {
 }
 
 FdHolder CgroupController::GetCgroupFd() const {
-    return FdHolder(SYSCALL(open(GetCgroupPath().c_str(), O_PATH | O_RDONLY | O_CLOEXEC)));
+    return FdHolder(SEX_SYSCALL(open(GetCgroupPath().c_str(), O_PATH | O_RDONLY | O_CLOEXEC)));
 }
 
 CgroupController::~CgroupController() {

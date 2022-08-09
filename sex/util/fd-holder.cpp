@@ -28,7 +28,7 @@ int FdHolder::get() const noexcept {
 
 void FdHolder::reset(int new_fd) noexcept {
     if (fd_ != NeutralValue) {
-      SYSCALL(close(fd_));
+      SEX_SYSCALL(close(fd_));
     }
     fd_ = new_fd;
 }
