@@ -7,7 +7,6 @@
 #include <fcntl.h>
 #include <fstream>
 #include <iostream>
-#include <string_view>
 
 const fs::path CgroupController::CgroupsPath = "/sys/fs/cgroup";
 const fs::path CgroupController::SboxCgroup = CgroupController::CgroupsPath / "sbox";
@@ -34,7 +33,7 @@ void InitializeParantCgroup() {
 
 }
 
-CgroupController::CgroupController(const std::string& cgroup_name, const Builder& options)
+CgroupController::CgroupController(std::string_view cgroup_name, const Builder& options)
   : CgroupPath_(SboxCgroup / cgroup_name) {
 
   InitializeParantCgroup();

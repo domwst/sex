@@ -6,7 +6,6 @@
 #include <sex/util/source_location.hpp>
 
 #include <filesystem>
-#include <string>
 #include <string_view>
 
 namespace fs = std::filesystem;
@@ -31,7 +30,7 @@ class CgroupController {
 
   CgroupController(CgroupController&&) = delete;
 
-  CgroupController(const std::string& cgroup_name, const Builder& options);
+  CgroupController(std::string_view cgroup_name, const Builder& options);
 
   void ChangeMemoryLimit(uint64_t newval); // CAUTION: This REALLY slows down process execution
   void ChangePidsLimit(uint64_t newval);
