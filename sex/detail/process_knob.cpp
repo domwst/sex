@@ -15,7 +15,7 @@ ProcessKnob::ProcessKnob(int pid) : ProcessKnob(pid, FdHolder()) {
 }
 
 int ProcessKnob::GetPidFd() const {
-  return pid_fd_.get();
+  return pid_fd_.Get();
 }
 
 ExitStatus ProcessKnob::Wait()&& {  // NOLINT

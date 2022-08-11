@@ -28,7 +28,7 @@ ProcessKnob Execute(Routine f, ExecuteArgs args, IExecuteHooks& hooks) {
   FdHolder pfd;
 
   if (cl_args.flags & CLONE_PIDFD) {
-    pfd.reset(pidfd);
+    pfd.Reset(pidfd);
   }
 
   return {child_pid, std::move(pfd)};

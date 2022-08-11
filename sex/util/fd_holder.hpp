@@ -20,13 +20,13 @@ class FdHolder {
 
   FdHolder& operator=(FdHolder&& other) noexcept;
 
-  void swap(FdHolder& other) noexcept;
+  void Swap(FdHolder& other) noexcept;
 
-  [[nodiscard]] int get() const noexcept;
+  [[nodiscard]] int Get() const noexcept;
 
-  void reset(int new_fd = NeutralValue) noexcept;
+  void Reset(int new_fd = NeutralValue) noexcept;
 
-  int release() noexcept;
+  int Release() noexcept;
 
   ~FdHolder();
 };

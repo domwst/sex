@@ -12,37 +12,37 @@ FdHolder::FdHolder(int fd) noexcept: fd_(fd) {}
 FdHolder::FdHolder() noexcept: FdHolder(NeutralValue) {}
 
 FdHolder::FdHolder(FdHolder&& other) noexcept: FdHolder() {
-  swap(other);
+  Swap(other);
 }
 
-void FdHolder::swap(FdHolder& other) noexcept {
+void FdHolder::Swap(FdHolder& other) noexcept {
   std::swap(fd_, other.fd_);
 }
 
 FdHolder& FdHolder::operator=(FdHolder&& other) noexcept {
-  swap(other);
+  Swap(other);
   return *this;
 }
 
-int FdHolder::get() const noexcept {
+int FdHolder::Get() const noexcept {
   return fd_;
 }
 
-void FdHolder::reset(int new_fd) noexcept {
+void FdHolder::Reset(int new_fd) noexcept {
   if (fd_ != NeutralValue) {
     SEX_SYSCALL(close(fd_));
   }
   fd_ = new_fd;
 }
 
-int FdHolder::release() noexcept {
-  int f = get();
+int FdHolder::Release() noexcept {
+  int f = Get();
   fd_ = NeutralValue;
   return f;
 }
 
 FdHolder::~FdHolder() {
-  reset();
+  Reset();
 }
 
 }
