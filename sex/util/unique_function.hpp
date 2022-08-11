@@ -12,6 +12,6 @@ using UniqueFunction = fu2::function_base<
   /* IsThrowing= */               true,
   /* HasStrongExceptGuarantee= */ false,
   /* Signatures= */               Signature
-  >;
+>;
 
 }  // sex

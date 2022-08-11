@@ -22,7 +22,7 @@ int ExitStatus::ExitCode() const {
   return WEXITSTATUS(status_);
 }
 
-int ExitStatus::Signal() const  {
+int ExitStatus::Signal() const {
   SEX_ASSERT(IsSignaled());
   return WTERMSIG(status_);
 }

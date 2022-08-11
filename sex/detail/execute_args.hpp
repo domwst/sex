@@ -8,8 +8,8 @@ namespace sex {
 #pragma push_macro("DECLARE_EXECUTE_FLAG")
 
 #define DECLARE_EXECUTE_FLAG(KnobName)  \
-  ExecuteArgs& New##KnobName();       \
-                                      \
+  ExecuteArgs& New##KnobName();         \
+                                        \
   ExecuteArgs& Same##KnobName();
 
 class ExecuteArgs {

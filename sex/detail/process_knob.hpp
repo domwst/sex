@@ -7,13 +7,14 @@
 namespace sex {
 
 class ExecuteArgs;
+
 class IExecuteHooks;
 
 class ProcessKnob {
  public:
   [[nodiscard]] int GetPidFd() const;
 
-  ExitStatus Wait() &&;
+  ExitStatus Wait()&&;
 
   [[nodiscard]] int Pid() const;
 

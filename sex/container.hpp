@@ -7,20 +7,24 @@ namespace fs = std::filesystem;
 
 class Container {
 
-public:
-    Container() = delete;
-    Container(const Container&) = delete;
-    Container(Container&&) = delete;
+ public:
+  Container() = delete;
 
-    explicit Container(
-      const std::string& name,
-      const fs::path& containers_path = TmpSbox);
+  Container(const Container&) = delete;
 
-    void Enter() const;
-    [[nodiscard]] const fs::path& GetPath() const;
-    ~Container();
+  Container(Container&&) = delete;
 
-    static const fs::path TmpSbox;
-private:
-    const fs::path ContainerPath_;
+  explicit Container(
+    const std::string& name,
+    const fs::path& containers_path = TmpSbox);
+
+  void Enter() const;
+
+  [[nodiscard]] const fs::path& GetPath() const;
+
+  ~Container();
+
+  static const fs::path TmpSbox;
+ private:
+  const fs::path ContainerPath_;
 };

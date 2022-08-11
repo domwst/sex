@@ -14,11 +14,11 @@ ProcessKnob::ProcessKnob(int pid, FdHolder pid_fd)
 ProcessKnob::ProcessKnob(int pid) : ProcessKnob(pid, FdHolder()) {
 }
 
-int ProcessKnob::GetPidFd() const  {
+int ProcessKnob::GetPidFd() const {
   return pid_fd_.get();
 }
 
-ExitStatus ProcessKnob::Wait() && {
+ExitStatus ProcessKnob::Wait()&& {  // NOLINT
   int status;
   SEX_ASSERT(waitpid(pid_, &status, __WALL) == pid_);
   return ExitStatus(status);

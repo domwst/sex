@@ -18,7 +18,8 @@ constexpr std::string_view SourceLocation::Function() const {
 }
 
 std::ostream& operator<<(std::ostream& out, const SourceLocation& location) {
-  out << fmt::format("{:s}:{:d} in {:s}", location.Filename().data(), location.Line(), location.Function().data());
+  out << fmt::format("{:s}:{:d} in {:s}", location.Filename().data(),
+                     location.Line(), location.Function().data());
   return out;
 }
 

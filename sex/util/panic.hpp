@@ -6,6 +6,7 @@
 
 namespace sex::util {
 
-[[noreturn]] void Panic(std::string_view message, SourceLocation location = SourceLocation::Current());
+[[noreturn]] void Panic(std::string_view message,
+                        SourceLocation location = SourceLocation::Current());
 
 }  // namespace sex::util

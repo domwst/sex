@@ -37,7 +37,7 @@ void InitializeParantCgroup() {
 }
 
 CgroupController::CgroupController(const std::string& cgroup_name, const Builder& options)
-    : CgroupPath_(SboxCgroup / cgroup_name) {
+  : CgroupPath_(SboxCgroup / cgroup_name) {
 
   InitializeParantCgroup();
 
@@ -51,41 +51,41 @@ CgroupController::CgroupController(const std::string& cgroup_name, const Builder
 }
 
 void CgroupController::ChangeMemoryLimit(uint64_t newval) {
-    std::ofstream out(CgroupPath_ / memory_max);
-    if (newval == Builder::NoLimit) {
-        out << "max";
-    } else {
-        out << newval;
-    }
+  std::ofstream out(CgroupPath_ / memory_max);
+  if (newval == Builder::NoLimit) {
+    out << "max";
+  } else {
+    out << newval;
+  }
 }
 
 void CgroupController::ChangePidsLimit(uint64_t newval) {
-    std::ofstream out(CgroupPath_ / pids_max);
-    if (newval == Builder::NoLimit) {
-        out << "max";
-    } else {
-        out << newval;
-    }
+  std::ofstream out(CgroupPath_ / pids_max);
+  if (newval == Builder::NoLimit) {
+    out << "max";
+  } else {
+    out << newval;
+  }
 }
 
 uint64_t CgroupController::GetCurrentMemory() {
-    uint64_t ret;
-    std::ifstream(CgroupPath_ / memory_current) >> ret;
-    return ret;
+  uint64_t ret;
+  std::ifstream(CgroupPath_ / memory_current) >> ret;
+  return ret;
 }
 
 void CgroupController::CgroupKill() {
-    std::ofstream(CgroupPath_ / cgroup_kill) << "1";
+  std::ofstream(CgroupPath_ / cgroup_kill) << "1";
 }
 
 FdHolder CgroupController::GetCgroupFd() const {
-    return FdHolder(SEX_SYSCALL(open(GetCgroupPath().c_str(), O_PATH | O_RDONLY | O_CLOEXEC)));
+  return FdHolder(SEX_SYSCALL(open(GetCgroupPath().c_str(), O_PATH | O_RDONLY | O_CLOEXEC)));
 }
 
 CgroupController::~CgroupController() {
-    fs::remove(CgroupPath_);
+  fs::remove(CgroupPath_);
 }
 
 const fs::path& CgroupController::GetCgroupPath() const {
-    return CgroupPath_;
+  return CgroupPath_;
 }

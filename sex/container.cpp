@@ -26,18 +26,18 @@ Container::Container(const std::string& name, const fs::path& containers_path)
   : ContainerPath_(containers_path / name) {
 
   Initialize();
-    fs::create_directory(ContainerPath_);
+  fs::create_directory(ContainerPath_);
 }
 
 void Container::Enter() const {
-    SEX_SYSCALL(chroot(GetPath().c_str()));
-    SEX_SYSCALL(chdir("/"));
+  SEX_SYSCALL(chroot(GetPath().c_str()));
+  SEX_SYSCALL(chdir("/"));
 }
 
 const fs::path& Container::GetPath() const {
-    return ContainerPath_;
+  return ContainerPath_;
 }
 
 Container::~Container() {
-    fs::remove_all(ContainerPath_);
+  fs::remove_all(ContainerPath_);
 }
