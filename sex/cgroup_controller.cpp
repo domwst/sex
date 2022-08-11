@@ -4,12 +4,10 @@
 
 #include <sex/detail/syscall.hpp>
 
-#include <cstring>
 #include <fcntl.h>
 #include <fstream>
 #include <iostream>
 #include <string_view>
-#include <unistd.h>
 
 const fs::path CgroupController::CgroupsPath = "/sys/fs/cgroup";
 const fs::path CgroupController::SboxCgroup = CgroupController::CgroupsPath / "sbox";
