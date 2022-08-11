@@ -12,9 +12,12 @@ public:
     Container(const Container&) = delete;
     Container(Container&&) = delete;
 
-    Container(const std::string& name);
+    explicit Container(
+      const std::string& name,
+      const fs::path& containers_path = TmpSbox);
+
     void Enter() const;
-    const fs::path& GetPath() const;
+    [[nodiscard]] const fs::path& GetPath() const;
     ~Container();
 
     static const fs::path TmpSbox;
