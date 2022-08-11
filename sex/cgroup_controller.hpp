@@ -20,7 +20,8 @@ class CgroupController {
 
     Builder(const Builder& other) = default;
 
-   AddBuilderFieldDefault(uint64_t, MemoryLimit, NoLimit) // CAUTION: This REALLY slows down process execution
+   AddBuilderFieldDefault(uint64_t, MemoryLimit,
+                          NoLimit) // CAUTION: This REALLY slows down process execution
    AddBuilderFieldDefault(uint64_t, PidsLimit, NoLimit)
   };
 
@@ -32,8 +33,9 @@ class CgroupController {
 
   CgroupController(std::string_view cgroup_name, const Builder& options);
 
-  void ChangeMemoryLimit(uint64_t newval); // CAUTION: This REALLY slows down process execution
-  void ChangePidsLimit(uint64_t newval);
+  void SetMemoryLimit(
+    uint64_t newval); // CAUTION: This REALLY slows down process execution
+  void SetPidsLimit(uint64_t newval);
 
   uint64_t GetCurrentMemory();
 

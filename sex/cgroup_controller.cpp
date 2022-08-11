@@ -9,7 +9,8 @@
 #include <iostream>
 
 const fs::path CgroupController::CgroupsPath = "/sys/fs/cgroup";
-const fs::path CgroupController::SboxCgroup = CgroupController::CgroupsPath / "sbox";
+const fs::path CgroupController::SboxCgroup =
+  CgroupController::CgroupsPath / "sbox";
 const fs::path CgroupController::SubtreeControl = "cgroup.subtree_control";
 
 namespace {
@@ -22,32 +23,39 @@ void InitializeParantCgroup() {
       return;
     }
     constexpr std::string_view EssentialControllers = "+memory +pids";
-    std::ofstream(CgroupController::CgroupsPath / CgroupController::SubtreeControl) << EssentialControllers;
+    std::ofstream(
+      CgroupController::CgroupsPath / CgroupController::SubtreeControl)
+      << EssentialControllers;
     fs::create_directory(CgroupController::SboxCgroup);
     // Race here: if another process checks that cgroup folder is created, it
     // would find out that it is created and would think that everything is
     // set up, but it isn't until the next line
-    std::ofstream(CgroupController::SboxCgroup / CgroupController::SubtreeControl) << EssentialControllers;
+    std::ofstream(
+      CgroupController::SboxCgroup / CgroupController::SubtreeControl)
+      << EssentialControllers;
   });
 }
 
 }
 
-CgroupController::CgroupController(std::string_view cgroup_name, const Builder& options)
+CgroupController::CgroupController(std::string_view cgroup_name,
+                                   const Builder& options)
   : CgroupPath_(SboxCgroup / cgroup_name) {
 
   InitializeParantCgroup();
 
   fs::create_directory(CgroupPath_);
-  if (uint64_t mem_limit = options.GetMemoryLimit(); mem_limit != Builder::NoLimit) {
-    ChangeMemoryLimit(mem_limit);
+  if (uint64_t mem_limit = options.GetMemoryLimit(); mem_limit !=
+                                                     Builder::NoLimit) {
+    SetMemoryLimit(mem_limit);
   }
-  if (uint64_t pids_limit = options.GetPidsLimit(); pids_limit != Builder::NoLimit) {
-    ChangePidsLimit(pids_limit);
+  if (uint64_t pids_limit = options.GetPidsLimit(); pids_limit !=
+                                                    Builder::NoLimit) {
+    SetPidsLimit(pids_limit);
   }
 }
 
-void CgroupController::ChangeMemoryLimit(uint64_t newval) {
+void CgroupController::SetMemoryLimit(uint64_t newval) {
   std::ofstream out(CgroupPath_ / memory_max);
   if (newval == Builder::NoLimit) {
     out << "max";
@@ -56,7 +64,7 @@ void CgroupController::ChangeMemoryLimit(uint64_t newval) {
   }
 }
 
-void CgroupController::ChangePidsLimit(uint64_t newval) {
+void CgroupController::SetPidsLimit(uint64_t newval) {
   std::ofstream out(CgroupPath_ / pids_max);
   if (newval == Builder::NoLimit) {
     out << "max";
@@ -76,7 +84,8 @@ void CgroupController::CgroupKill() {
 }
 
 FdHolder CgroupController::GetCgroupFd() const {
-  return FdHolder(SEX_SYSCALL(open(GetCgroupPath().c_str(), O_PATH | O_RDONLY | O_CLOEXEC)));
+  return FdHolder(
+    SEX_SYSCALL(open(GetCgroupPath().c_str(), O_PATH | O_RDONLY | O_CLOEXEC)));
 }
 
 CgroupController::~CgroupController() {
