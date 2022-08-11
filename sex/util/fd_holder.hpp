@@ -1,5 +1,7 @@
 #pragma once
 
+namespace sex {
+
 class FdHolder {
  private:
   constexpr static int NeutralValue = -1;
@@ -28,3 +30,5 @@ class FdHolder {
 
   ~FdHolder();
 };
+
+}

@@ -10,6 +10,8 @@
 
 namespace fs = std::filesystem;
 
+namespace sex {
+
 class CgroupController {
  public:
   class Builder {
@@ -60,3 +62,5 @@ class CgroupController {
   static constexpr std::string_view pids_max = "pids.max";
   static constexpr std::string_view cgroup_kill = "cgroup.kill";
 };
+
+}

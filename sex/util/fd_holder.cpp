@@ -5,6 +5,8 @@
 #include <iostream>
 #include <unistd.h>
 
+namespace sex {
+
 FdHolder::FdHolder(int fd) noexcept: fd_(fd) {}
 
 FdHolder::FdHolder() noexcept: FdHolder(NeutralValue) {}
@@ -41,4 +43,6 @@ int FdHolder::release() noexcept {
 
 FdHolder::~FdHolder() {
   reset();
+}
+
 }

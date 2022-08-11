@@ -8,6 +8,8 @@
 #include <fstream>
 #include <iostream>
 
+namespace sex {
+
 const fs::path CgroupController::CgroupsPath = "/sys/fs/cgroup";
 const fs::path CgroupController::SboxCgroup =
   CgroupController::CgroupsPath / "sbox";
@@ -94,4 +96,6 @@ CgroupController::~CgroupController() {
 
 const fs::path& CgroupController::GetCgroupPath() const {
   return CgroupPath_;
+}
+
 }
