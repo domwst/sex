@@ -22,10 +22,16 @@ void Initialize() {
 
 }
 
+Container::Container(const std::string& name)
+  : ContainerPath_(TmpSbox / name) {
+
+  Initialize();
+  fs::create_directory(ContainerPath_);
+}
+
 Container::Container(const std::string& name, const fs::path& containers_path)
   : ContainerPath_(containers_path / name) {
 
-  Initialize();
   fs::create_directory(ContainerPath_);
 }
 

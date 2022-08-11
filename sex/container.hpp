@@ -14,9 +14,11 @@ class Container {
 
   Container(Container&&) = delete;
 
-  explicit Container(
+  explicit Container(const std::string& name);
+
+  Container(
     const std::string& name,
-    const fs::path& containers_path = TmpSbox);
+    const fs::path& where);
 
   void Enter() const;
 
