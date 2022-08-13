@@ -8,7 +8,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "bin")
 
 add_compile_options(-Wall -Wextra -Wpedantic -Werror -g -fno-omit-frame-pointer)
-add_compile_options(-Wno-error=useless-cast)
 
 add_subdirectory(sex)
 add_subdirectory(third_party)
