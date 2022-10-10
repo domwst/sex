@@ -1,16 +1,17 @@
 #pragma once
 
+#include <sex/util/file_descriptor.hpp>
+
 namespace sex {
 
 class FdHolder {
  private:
-  constexpr static int NeutralValue = -1;
-  int fd_;
+  FileDescriptor fd_;
 
  public:
   explicit FdHolder(int fd) noexcept;
 
-  FdHolder() noexcept;
+  FdHolder() noexcept = default;
 
   FdHolder(FdHolder&& other) noexcept;
 
@@ -22,11 +23,14 @@ class FdHolder {
 
   void Swap(FdHolder& other) noexcept;
 
-  [[nodiscard]] int Get() const noexcept;
+  [[nodiscard]] int GetInt() const noexcept;
 
-  void Reset(int new_fd = NeutralValue) noexcept;
+  // NOLINTNEXTLINE
+  [[nodiscard]] operator FileDescriptor() const noexcept;
 
-  int Release() noexcept;
+  void Reset(FileDescriptor new_fd = {}) noexcept;
+
+  FileDescriptor Release() noexcept;
 
   ~FdHolder();
 };
