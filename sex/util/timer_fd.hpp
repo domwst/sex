@@ -12,7 +12,7 @@ namespace sex {
 class TimerFd {
  public:
   enum Flags {
-    BLOCKING = 0,
+    NONE = 0,
     NONBLOCKING = TFD_NONBLOCK,
     NO_CLOSE_ON_EXEC = TFD_CLOEXEC,
   };
@@ -24,7 +24,7 @@ class TimerFd {
     Duration interval;
   };
 
-  explicit TimerFd(Flags flags = BLOCKING)
+  explicit TimerFd(Flags flags = NONE)
     : timer_(SEX_SYSCALL(timerfd_create(CLOCK_MONOTONIC,
                                         flags ^ NO_CLOSE_ON_EXEC))) {
   }
