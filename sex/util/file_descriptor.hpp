@@ -9,11 +9,15 @@ class FileDescriptor {
  public:
   FileDescriptor() = default;
 
-  FileDescriptor(int fd) : fd_(fd) {
+  explicit FileDescriptor(int fd) : fd_(fd) {
   }
 
-  operator bool() const noexcept {
+  explicit operator bool() const noexcept {
     return fd_ != None;
+  }
+
+  [[nodiscard]] explicit operator int() const noexcept {
+    return GetInt();
   }
 
   [[nodiscard]] int GetInt() const noexcept {
