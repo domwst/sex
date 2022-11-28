@@ -12,7 +12,7 @@ class FileDescriptor {
   explicit FileDescriptor(int fd) : fd_(fd) {
   }
 
-  explicit operator bool() const noexcept {
+  [[nodiscard]] explicit operator bool() const noexcept {
     return fd_ != None;
   }
 
