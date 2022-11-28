@@ -15,10 +15,10 @@ ProcessKnob::ProcessKnob(int pid) : ProcessKnob(pid, FdHolder()) {
 }
 
 int ProcessKnob::GetPidFd() const {
-  return pid_fd_.Get();
+  return FileDescriptor(pid_fd_).GetInt();
 }
 
-ExitStatus ProcessKnob::Wait()&& {  // NOLINT
+ExitStatus ProcessKnob::Wait() && {  // NOLINT
   int status;
   SEX_ASSERT(waitpid(pid_, &status, __WALL) == pid_);
   return ExitStatus(status);
