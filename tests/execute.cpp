@@ -1,6 +1,7 @@
 #include <boost/ut.hpp>
 
 #include <sex/execute.hpp>
+#include <sex/util/pipe.hpp>
 
 #include <unistd.h>
 
@@ -61,16 +62,15 @@ static ut::suite execute = [] {
   };
 
   "correct_pid_in_knob"_test = [] {
-    int fd[2];
-    SEX_SYSCALL(pipe(fd));
+    auto pipe = sex::util::MakePipe();
 
-    auto handle = sex::Execute([fd] {
+    auto handle = sex::Execute([in = std::move(pipe.in)] {
       int pid = getpid();
-      SEX_ASSERT(write(fd[1], &pid, sizeof(int)) == sizeof(int));
+      SEX_ASSERT(write(in.GetInt(), &pid, sizeof(int)) == sizeof(int));
     }, {});
 
     int real_child_pid;
-    SEX_ASSERT(read(fd[0], &real_child_pid, sizeof(int)) == sizeof(int));
+    SEX_ASSERT(read(pipe.out.GetInt(), &real_child_pid, sizeof(int)) == sizeof(int));
 
     expect(eq(real_child_pid, handle.Pid()));
 
