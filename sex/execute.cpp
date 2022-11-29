@@ -5,7 +5,7 @@ namespace sex {
 ProcessKnob Execute(Routine f, ExecuteArgs args, IExecuteHooks& hooks) {
   auto cl_args = *args.GetCloneArgs();
 
-  int pidfd;
+  int pidfd = -1;
   if (cl_args.flags & CLONE_PIDFD) {
     cl_args.pidfd = reinterpret_cast<uint64_t>(&pidfd);
   }
@@ -28,7 +28,7 @@ ProcessKnob Execute(Routine f, ExecuteArgs args, IExecuteHooks& hooks) {
   FdHolder pfd;
 
   if (cl_args.flags & CLONE_PIDFD) {
-    pfd.Reset(pidfd);
+    pfd.Reset(FileDescriptor(pidfd));
   }
 
   return {child_pid, std::move(pfd)};
