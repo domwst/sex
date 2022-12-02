@@ -97,8 +97,6 @@ class TimerFd : protected FdHolder {
 
     return result;
   }
-
-  FdHolder timer_;
 };
 
 }  // sex
