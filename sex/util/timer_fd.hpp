@@ -9,7 +9,7 @@
 
 namespace sex {
 
-class TimerFd {
+class TimerFd : protected FdHolder {
  public:
   enum Flags {
     NONE = 0,
@@ -25,17 +25,15 @@ class TimerFd {
   };
 
   explicit TimerFd(Flags flags = NONE)
-    : timer_(SEX_SYSCALL(timerfd_create(CLOCK_MONOTONIC,
+    : FdHolder(SEX_SYSCALL(timerfd_create(CLOCK_MONOTONIC,
                                         flags ^ NO_CLOSE_ON_EXEC))) {
   }
 
-  [[nodiscard]] FileDescriptor GetFd() const noexcept {
-    return timer_;
-  }
+  using FdHolder::operator FileDescriptor;
 
   uint64_t Wait() const {
     uint64_t cnt = 0;
-    auto ret = read(GetFd().GetInt(), &cnt, sizeof(cnt));
+    auto ret = read(GetInt(), &cnt, sizeof(cnt));
     SEX_ASSERT(ret == sizeof(cnt) || (ret == -1 && errno == EAGAIN));
     return cnt;
   }
@@ -52,7 +50,7 @@ class TimerFd {
     itimerspec tmp = ToITimerSpec(spec);
     itimerspec prev{};
 
-    SEX_SYSCALL(timerfd_settime(GetFd().GetInt(), 0, &tmp, &prev));
+    SEX_SYSCALL(timerfd_settime(GetInt(), 0, &tmp, &prev));
     return FromITimerSpec(prev);
   }
 
@@ -62,7 +60,7 @@ class TimerFd {
 
   [[nodiscard]] TimerSpec GetTimerSpec() const {
     itimerspec spec{};
-    SEX_SYSCALL(timerfd_gettime(GetFd().GetInt(), &spec));
+    SEX_SYSCALL(timerfd_gettime(GetInt(), &spec));
     return FromITimerSpec(spec);
   }
 
