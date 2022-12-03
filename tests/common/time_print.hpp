@@ -5,26 +5,11 @@
 
 namespace sex::test::detail {
 
-void PrintTimeSuffix(
-  std::ostream& out,
-  std::milli
-) {
-  out << "ms";
-}
+void PrintTimeSuffix(std::ostream& out, std::milli);
 
-void PrintTimeSuffix(
-  std::ostream& out,
-  std::micro
-) {
-  out << "us";
-}
+void PrintTimeSuffix(std::ostream& out, std::micro);
 
-void PrintTimeSuffix(
-  std::ostream& out,
-  std::nano
-) {
-  out << "ns";
-}
+void PrintTimeSuffix(std::ostream& out, std::nano);
 
 }  // namespace sex::test::detail
 
