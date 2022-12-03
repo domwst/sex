@@ -1,9 +1,9 @@
+#pragma once
+
 #include <sex/util/fd_holder.hpp>
 #include <sex/detail/syscall.hpp>
 
-#include <unistd.h>
 #include <fcntl.h>
-#include <array>
 
 namespace sex::util {
 
@@ -18,11 +18,6 @@ struct Pipe {
   };
 };
 
-[[nodiscard]] Pipe MakePipe(Pipe::Flags flags = Pipe::NONE) {
-  std::array<int, 2> fd{};
-  SEX_SYSCALL(pipe2(fd.data(), static_cast<int>(flags) ^ O_CLOEXEC));
-
-  return Pipe{.in = FdHolder(fd[1]), .out = FdHolder(fd[0])};
-};
+[[nodiscard]] Pipe MakePipe(Pipe::Flags flags = Pipe::NONE);
 
 }
