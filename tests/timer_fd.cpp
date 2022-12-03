@@ -1,3 +1,4 @@
+#include "common/time_print.hpp"
 #include "common/cpu_time_guard.hpp"
 #include "common/stopwatch/high_resolution_stopwatch.hpp"
 
@@ -31,8 +32,8 @@ void ExpectExpireIn(sex::TimerFd& timer, Duration expected,
   auto end = std::chrono::high_resolution_clock::now();
 
   auto elapsed = end - start;
-  auto deviation = std::chrono::duration_cast<Duration>(abs(elapsed - expected));
-  expect(le(deviation.count(), precision.count()));
+  auto deviation = abs(elapsed - expected);
+  expect(that % deviation <= precision);
 }
 
 static ut::suite timer_fd = [] {
@@ -58,9 +59,9 @@ static ut::suite timer_fd = [] {
     }
     auto spec = timer.Cancel();
 
-    expect(eq(spec.interval.count(), interval.count()));
-    expect(le(spec.first_expiration.count(), interval.count()));
-    expect(ge(spec.first_expiration.count(), (interval - time_eps).count()));
+    expect(that % spec.interval == interval);
+    expect(that % spec.first_expiration <= interval);
+    expect(that % spec.first_expiration >= interval - time_eps);
   };
 
   "non_blocking"_test = [] {
@@ -68,9 +69,9 @@ static ut::suite timer_fd = [] {
 
     TimerFd timer(TimerFd::NONBLOCKING);
     timer.Set(delay);
-    expect(eq(timer.Wait(), size_t(0)));
+    expect(that % timer.Wait() == size_t(0));
     std::this_thread::sleep_for(delay + 10ms);
-    expect(eq(timer.Wait(), size_t(1)));
+    expect(that % timer.Wait() == size_t(1));
   };
 
   "blocking_indefinitely"_test = [] {
@@ -85,10 +86,10 @@ static ut::suite timer_fd = [] {
     std::this_thread::sleep_for(100ms);
     kill(handle.Pid(), SIGKILL);
     auto status = std::move(handle).Wait();
-    expect(status.IsSignaled() && eq(status.Signal(), SIGKILL));
+    expect(status.IsSignaled() && that % status.Signal() == SIGKILL);
 
     char c;
-    expect(eq(SEX_SYSCALL(read(pipe.out.GetInt(), &c, sizeof(c))), 0));
+    expect(that % SEX_SYSCALL(read(pipe.out.GetInt(), &c, sizeof(c))) == 0);
   };
 
   "not_burning_cpu"_test = [] {
@@ -98,9 +99,9 @@ static ut::suite timer_fd = [] {
     TimerFd t;
     t.Set(1ms, 20ms);
     for (int i = 0; i < 20; ++i) {
-      expect(eq(t.Wait(), (size_t)1));
+      expect(that % t.Wait() == (size_t)1);
       auto now = stopwatch.TimePassed();
-      expect(ut::detail::and_(now >= 20ms * i, now <= 20ms * i + 21ms));
+      expect(that % now >= 20ms * i && that % now <= 20ms * i + 21ms);
     }
   };
 };
