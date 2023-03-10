@@ -9,4 +9,4 @@ RUN apt-get install -y \
     clang-14 \
     clang++-14
 
-ENV CC=/usr/bin/clang CXX=/usr/bin/clang++
+ENV CC=/usr/bin/clang-14 CXX=/usr/bin/clang++-14
