@@ -7,6 +7,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "bin")
 
+include(cmake/CompilerCheck.cmake)
+
 add_compile_options(-Wall -Wextra -Wpedantic -Werror -g -fno-omit-frame-pointer)
 
 add_subdirectory(sex)

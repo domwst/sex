@@ -1,0 +1,12 @@
+FROM ubuntu:22.04
+
+WORKDIR /work
+
+RUN apt-get update
+
+RUN apt-get install -y \
+    cmake \
+    clang-14 \
+    clang++-14
+
+ENV CC=/usr/bin/clang CXX=/usr/bin/clang++
