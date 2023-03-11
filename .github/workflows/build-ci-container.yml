@@ -4,7 +4,8 @@ on:
   push:
     paths:
       - .ci-container/**
-      branches: [ "master" ]
+    branches:
+      - master
 
 jobs:
   ci-image-build-and-push:
