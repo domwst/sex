@@ -8,7 +8,6 @@ RUN apt-get install -y \
     cmake \
     clang-14 \
     clang++-14 \
-    git \
-    clang-tidy
+    git
 
 ENV CC="/usr/bin/clang-14" CXX="/usr/bin/clang++-14"
