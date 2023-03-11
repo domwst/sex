@@ -1,0 +1,25 @@
+name: Development CI
+
+on:
+  push:
+    branches: [ $default-branch ]
+  pull_request:
+    branches: [ $default-branch ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    container:
+      dockerfile: domwst/sex-ci
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Create cmake directory
+      run: mkdir cmake-build-test
+    - name: Run cmake
+      run: cd cmake-build-test && cmake -DSEX_DEVELOPER=ON ..
+    - name: Run make
+      run: cd cmake-build-test && make
+    - name: Run tests
+      run: cmake-build-test/tests/bin/sex_all_tests
