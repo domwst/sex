@@ -1,4 +1,4 @@
-name: Development CI
+name: Check
 
 on:
   push:
@@ -7,64 +7,6 @@ on:
     branches: [ "master" ]
 
 jobs:
-  ci-image-build-and-push:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      # Get the SHA of the last successful run of this job
-      - name: Get last successful run SHA
-        id: last-successful-run
-        uses: actions/github-script@v6.4.0
-        with:
-          script: |
-            const { data: runs } = await github.actions.listWorkflowRuns({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              workflow_id: context.workflow,
-              status: 'success',
-              per_page: 1,
-            });
-            return runs[0]?.head_sha || '';
-
-      # Check if the container folder has changed since the last successful run
-      - name: Check if container folder has changed
-        id: container-changed
-        run: |
-          if [ -z "${{ steps.last-successful-run.outputs.result }}" ]; then
-            # This is the first run of this job, so always build and publish the container
-            echo ::set-output name=changed::true
-          else
-            # Compare the current HEAD with the SHA of the last successful run
-            CHANGED=$(git diff --name-only ${{ steps.last-successful-run.outputs.result }} HEAD .ci-container)
-            echo ::set-output name=changed::$(test -n "$CHANGED" && echo true || echo false)
-          fi
-
-      - name: Finish job if not changed
-        if: ${{ ! steps.container-changed.outputs.changed }}
-        run: exit 0
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Login to container registry
-        uses: docker/login-action@v2
-        with:
-          username: domwst
-          password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
-
-      - name: Build and push
-        uses: docker/build-push-action@v4
-        with:
-          context: "{{defaultContext}}:.ci-container"
-          push: true
-          tags: domwst/sex-ci-image
-
-
   build-and-test:
     needs: ci-image-build-and-push
     runs-on: ubuntu-latest

@@ -1,0 +1,33 @@
+name: Build CI container
+
+on:
+  push:
+    paths:
+      - .ci-container/**
+      branches: [ "master" ]
+
+jobs:
+  ci-image-build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to container registry
+        uses: docker/login-action@v2
+        with:
+          username: domwst
+          password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: "{{defaultContext}}:.ci-container"
+          push: true
+          tags: domwst/sex-ci-image
