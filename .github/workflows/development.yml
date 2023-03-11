@@ -16,7 +16,7 @@ jobs:
       # Get the SHA of the last successful run of this job
       - name: Get last successful run SHA
         id: last-successful-run
-        uses: actions/github-script@v4
+        uses: actions/github-script@v6.4.0
         with:
           script: |
             const { data: runs } = await github.actions.listWorkflowRuns({
