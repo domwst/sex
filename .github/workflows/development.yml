@@ -7,7 +7,7 @@ on:
     branches: [ "master" ]
 
 jobs:
-  docker-image-build:
+  ci-image-build-and-push:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -19,29 +19,41 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
+      - name: Login to container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ secrets.DOCKER_REGISTRY }}
+          username: ${{ secrets.DOCKER_REGISTRY_LOGIN }}
+          password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
           context: "{{defaultContext}}:.ci-container"
-          push: false
-          tags: sex-ci
+          push: true
+          image: sex-ci-image
 
 
   build-and-test:
+    needs: ci-image-build-and-push
     runs-on: ubuntu-latest
 
     container:
-      image: sex-ci
+      image: ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_REGISTRY_LOGIN }}/sex-ci-image
       options: --privileged
 
     steps:
     - uses: actions/checkout@v3
-    - name: Create cmake directory
+
+    - name: Create cmake build directory
       run: mkdir cmake-build-test
+
     - name: Run cmake
       run: cd cmake-build-test && cmake -DSEX_DEVELOPER=ON ..
+
     - name: Run make
       run: cd cmake-build-test && make
+
     - name: Run tests
       run: cmake-build-test/tests/bin/sex_all_tests
 
