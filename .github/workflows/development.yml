@@ -11,7 +11,8 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      dockerfile: domwst/sex-ci
+      image: domwst/sex-ci
+      options: --privileged
 
     steps:
     - uses: actions/checkout@v3
