@@ -42,7 +42,7 @@ jobs:
           fi
 
       - name: Finish job if not changed
-        if: ! ${{ steps.container-changed.outputs.changed }}
+        if: ${{ ! steps.container-changed.outputs.changed }}
         run: exit 0
 
       - name: Set up QEMU
