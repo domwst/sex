@@ -1,6 +1,7 @@
 #include "execute_args.hpp"
+#include "sex/util/file_descriptor.hpp"
 
-#include <signal.h>
+#include <csignal>
 
 #define DEFINE_EXECUTE_FLAG(KnobName, Flag)     \
 ExecuteArgs& ExecuteArgs::New##KnobName() {     \
@@ -13,8 +14,7 @@ ExecuteArgs& ExecuteArgs::Same##KnobName() {    \
 
 namespace sex {
 
-ExecuteArgs::ExecuteArgs() {
-  args = {
+ExecuteArgs::ExecuteArgs() : args({
     .flags = 0,
     .pidfd = 0,
     .child_tid = 0,
@@ -26,8 +26,7 @@ ExecuteArgs::ExecuteArgs() {
     .set_tid = 0,
     .set_tid_size = 0,
     .cgroup = 0,
-  };
-}
+}) {}
 
 DEFINE_EXECUTE_FLAG(UserNS, CLONE_NEWUSER)
 
@@ -45,8 +44,8 @@ DEFINE_EXECUTE_FLAG(UTSNS, CLONE_NEWUTS)
 
 DEFINE_EXECUTE_FLAG(TimeNS, CLONE_NEWTIME)
 
-ExecuteArgs& ExecuteArgs::IntoCgroup(int cfd) {
-  args.cgroup = cfd;
+ExecuteArgs& ExecuteArgs::IntoCgroup(FileDescriptor cfd) {
+  args.cgroup = cfd.GetInt();
   return SetFlag(CLONE_INTO_CGROUP);
 }
 

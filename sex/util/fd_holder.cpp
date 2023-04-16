@@ -29,9 +29,9 @@ FdHolder::operator FileDescriptor() const noexcept {
   return fd_;
 }
 
-void FdHolder::Reset(FileDescriptor new_fd) noexcept {
+void FdHolder::Reset(FileDescriptor new_fd) {
   if (fd_) {
-    SEX_SYSCALL(close(fd_.GetInt()));
+    SEX_SYSCALL(close(fd_.GetInt())).ensure();
   }
   fd_ = new_fd;
 }

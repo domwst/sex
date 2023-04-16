@@ -5,10 +5,13 @@
 
 namespace sex::util {
 
+template<class F>
 class Once {
  public:
-  template<class F>
-  void Do(F&& f) noexcept(noexcept(F{}())) {
+  Once(F&& f) : action_(std::forward<F>(f)) {
+  }
+
+  void operator()() noexcept(noexcept(F{}())) {
     if (invoked_.load(std::memory_order_acquire)) {
       return;
     }
@@ -16,13 +19,14 @@ class Once {
     if (invoked_.load(std::memory_order_relaxed)) {
       return;
     }
-    f();
+    action_();
     invoked_.store(true, std::memory_order_release);
   }
 
  private:
   std::atomic<bool> invoked_{false};
   std::mutex mutex_;
+  std::remove_cvref_t<F> action_;
 };
 
 }  // namespace sex::util

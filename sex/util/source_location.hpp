@@ -18,11 +18,17 @@ class SourceLocation {
     return {line, function, filename};
   }
 
-  [[nodiscard]] constexpr size_t Line() const;
+  [[nodiscard]] constexpr size_t Line() const {
+      return line_;
+  }
 
-  [[nodiscard]] constexpr std::string_view Filename() const;
+  [[nodiscard]] constexpr std::string_view Filename() const {
+      return filename_;
+  }
 
-  [[nodiscard]] constexpr std::string_view Function() const;
+  [[nodiscard]] constexpr std::string_view Function() const {
+      return function_name_;
+  }
 
  private:
   constexpr SourceLocation(

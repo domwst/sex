@@ -28,7 +28,7 @@ class FdHolder {
   // NOLINTNEXTLINE
   [[nodiscard]] operator FileDescriptor() const noexcept;
 
-  void Reset(FileDescriptor new_fd = {}) noexcept;
+  void Reset(FileDescriptor new_fd = {});
 
   FileDescriptor Release() noexcept;
 

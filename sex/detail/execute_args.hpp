@@ -1,5 +1,7 @@
 #pragma once
 
+#include <sex/util/file_descriptor.hpp>
+
 #include <linux/sched.h>
 #include <cstdint>
 
@@ -32,7 +34,7 @@ class ExecuteArgs {
 
   DECLARE_EXECUTE_FLAG(TimeNS)
 
-  ExecuteArgs& IntoCgroup(int cfd);
+  ExecuteArgs& IntoCgroup(FileDescriptor cfd);
 
   ExecuteArgs& DiscardIntoCgroup();
 

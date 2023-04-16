@@ -45,7 +45,7 @@ static ut::suite execute = [] {
 
   "signal_suicide"_test = [] {
     auto handle = sex::Execute([] {
-      SEX_SYSCALL(kill(getpid(), SIGTERM));
+      SEX_SYSCALL(kill(getpid(), SIGTERM)).ensure();
     }, {});
 
     auto status = std::move(handle).Wait();

@@ -12,7 +12,7 @@ ProcessKnob Execute(Routine f, ExecuteArgs args, IExecuteHooks& hooks) {
 
   hooks.BeforeClone(cl_args);
 
-  pid_t child_pid = SEX_SYSCALL(syscall(SYS_clone3, &cl_args, sizeof(cl_args)));
+  pid_t child_pid = SEX_SYSCALL(syscall(SYS_clone3, &cl_args, sizeof(cl_args))).unwrap();
 
   if (child_pid == 0) {
     hooks.AfterCloneChild(cl_args);

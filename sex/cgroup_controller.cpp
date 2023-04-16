@@ -17,26 +17,22 @@ const fs::path CgroupController::SubtreeControl = "cgroup.subtree_control";
 
 namespace {
 
-sex::util::Once initialization_;
-
-void InitializeParantCgroup() {
-  initialization_.Do([] {
-    if (fs::exists(CgroupController::SboxCgroup)) {
-      return;
-    }
-    constexpr std::string_view EssentialControllers = "+memory +pids";
-    std::ofstream(
-      CgroupController::CgroupsPath / CgroupController::SubtreeControl)
-      << EssentialControllers;
-    fs::create_directory(CgroupController::SboxCgroup);
-    // Race here: if another process checks that cgroup folder is created, it
-    // would find out that it is created and would think that everything is
-    // set up, but it isn't until the next line
-    std::ofstream(
-      CgroupController::SboxCgroup / CgroupController::SubtreeControl)
-      << EssentialControllers;
-  });
-}
+sex::util::Once InitializeParentCgroup = [] {
+  if (fs::exists(CgroupController::SboxCgroup)) {
+    return;
+  }
+  constexpr std::string_view EssentialControllers = "+memory +pids";
+  std::ofstream(
+    CgroupController::CgroupsPath / CgroupController::SubtreeControl)
+    << EssentialControllers;
+  fs::create_directory(CgroupController::SboxCgroup);
+  // Potential race here: if another process checks that cgroup folder is created, it
+  // would find out that it is created and would think that everything is
+  // set up, but it isn't until the next line
+  std::ofstream(
+    CgroupController::SboxCgroup / CgroupController::SubtreeControl)
+    << EssentialControllers;
+};
 
 }
 
@@ -44,7 +40,7 @@ CgroupController::CgroupController(std::string_view cgroup_name,
                                    const Builder& options)
   : CgroupPath_(SboxCgroup / cgroup_name) {
 
-  InitializeParantCgroup();
+  InitializeParentCgroup();
 
   fs::create_directory(CgroupPath_);
   if (uint64_t mem_limit = options.GetMemoryLimit(); mem_limit !=
@@ -86,8 +82,7 @@ void CgroupController::CgroupKill() {
 }
 
 FdHolder CgroupController::GetCgroupFd() const {
-  return FdHolder(
-    SEX_SYSCALL(open(GetCgroupPath().c_str(), O_PATH | O_RDONLY | O_CLOEXEC)));
+  return FdHolder(SEX_SYSCALL(open(GetCgroupPath().c_str(), O_PATH | O_RDONLY | O_CLOEXEC)).unwrap());
 }
 
 CgroupController::~CgroupController() {
@@ -98,4 +93,4 @@ const fs::path& CgroupController::GetCgroupPath() const {
   return CgroupPath_;
 }
 
-}
+}  // sex

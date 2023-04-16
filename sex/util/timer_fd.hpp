@@ -26,7 +26,7 @@ class TimerFd : protected FdHolder {
 
   explicit TimerFd(Flags flags = NONE)
     : FdHolder(SEX_SYSCALL(timerfd_create(CLOCK_MONOTONIC,
-                                        flags ^ NO_CLOSE_ON_EXEC))) {
+                                        flags ^ NO_CLOSE_ON_EXEC)).unwrap()) {
   }
 
   using FdHolder::operator FileDescriptor;
@@ -50,7 +50,7 @@ class TimerFd : protected FdHolder {
     itimerspec tmp = ToITimerSpec(spec);
     itimerspec prev{};
 
-    SEX_SYSCALL(timerfd_settime(GetInt(), 0, &tmp, &prev));
+    SEX_SYSCALL(timerfd_settime(GetInt(), 0, &tmp, &prev)).ensure();
     return FromITimerSpec(prev);
   }
 
@@ -60,7 +60,7 @@ class TimerFd : protected FdHolder {
 
   [[nodiscard]] TimerSpec GetTimerSpec() const {
     itimerspec spec{};
-    SEX_SYSCALL(timerfd_gettime(GetInt(), &spec));
+    SEX_SYSCALL(timerfd_gettime(GetInt(), &spec)).ensure();
     return FromITimerSpec(spec);
   }
 

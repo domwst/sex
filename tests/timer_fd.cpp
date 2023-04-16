@@ -15,10 +15,6 @@ namespace ut = boost::ut;
 
 using Duration = sex::TimerFd::Duration;
 
-size_t GetMs(Duration d) {
-  return duration_cast<std::chrono::milliseconds>(d).count();
-}
-
 static constexpr Duration time_eps = std::chrono::milliseconds(10);
 
 void ExpectExpireIn(sex::TimerFd& timer, Duration expected,
@@ -89,7 +85,7 @@ static ut::suite timer_fd = [] {
     expect(status.IsSignaled() && that % status.Signal() == SIGKILL);
 
     char c;
-    expect(that % SEX_SYSCALL(read(pipe.out.GetInt(), &c, sizeof(c))) == 0);
+    expect(that % SEX_SYSCALL(read(pipe.out.GetInt(), &c, sizeof(c))).unwrap() == 0);
   };
 
   "not_burning_cpu"_test = [] {

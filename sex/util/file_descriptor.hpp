@@ -24,7 +24,7 @@ class FileDescriptor {
     return fd_;
   }
 
-  int Reset(int fd = None) {
+  int Reset(int fd = None) noexcept {
     return std::exchange(fd_, fd);
   }
 

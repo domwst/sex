@@ -10,15 +10,11 @@ const fs::path Container::TmpSbox = fs::temp_directory_path() / "sbox";
 
 namespace {
 
-sex::util::Once initializer_;
-
-void Initialize() {
-  initializer_.Do([] {
-    if (!fs::exists(Container::TmpSbox)) {
-      fs::create_directory(Container::TmpSbox);
-    }
-  });
-}
+sex::util::Once Initialize = [] {
+  if (!fs::exists(Container::TmpSbox)) {
+    fs::create_directory(Container::TmpSbox);
+  }
+};
 
 }
 
@@ -36,8 +32,8 @@ Container::Container(const std::string& name, const fs::path& containers_path)
 }
 
 void Container::Enter() const {
-  SEX_SYSCALL(chroot(GetPath().c_str()));
-  SEX_SYSCALL(chdir("/"));
+  SEX_SYSCALL(chroot(GetPath().c_str())).ensure();
+  SEX_SYSCALL(chdir("/")).ensure();
 }
 
 const fs::path& Container::GetPath() const {

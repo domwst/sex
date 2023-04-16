@@ -7,6 +7,7 @@
 
 #include <string_view>
 #include <cstring>
+#include "syscall_result.hpp"
 
 #define SEX_SYSCALL(expr) ::sex::detail::SyscallResult(#expr, expr)
 
@@ -23,14 +24,17 @@ do {                                                                  \
 
 namespace sex::detail {
 
-auto SyscallResult(
+template<class TResult>
+[[nodiscard]] SyscallResult<TResult> SyscallResult(
   std::string_view expression,
-  auto result,
+  TResult result,
   util::SourceLocation location = util::SourceLocation::Current()) {
   int error_code = errno;  // In case if following lines mess up error code
   if (SEX_UNLIKELY(int64_t(result) == -1)) {
-    Panic(fmt::format("{:s} failed: {:s} ({:d})", expression.data(),
-                      strerror(error_code), error_code), location);
+    std::string error_message = fmt::format("{:s} failed: {:s} ({:d})\nAt {:s}:{:d} in function {:s}",
+                                            expression.data(), strerror(error_code), error_code,
+                                            location.Filename(), location.Line(), location.Function());
+    return SyscallError(std::move(error_message));
   }
   return result;
 }

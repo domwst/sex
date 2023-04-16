@@ -32,7 +32,7 @@ void ExecuteHooksDefault::RememberUidGid() {
 }
 
 void ExecuteHooksDefault::CreateUidGidMappings() const {
-  SEX_SYSCALL(prctl(PR_SET_DUMPABLE, 1, 42, 42, 42));
+  SEX_SYSCALL(prctl(PR_SET_DUMPABLE, 1, 42, 42, 42)).ensure();
 
   SEX_ASSERT(
     std::ofstream("/proc/self/uid_map") << "0 " << previous_uid_ << " 1");

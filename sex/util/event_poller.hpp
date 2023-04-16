@@ -33,7 +33,7 @@ class EventPoller : protected FdHolder {
   };
 
   explicit EventPoller(Flags flags = NONE)
-    : FdHolder(SEX_SYSCALL(epoll_create1(flags ^ NO_CLOSE_ON_EXEC))) {
+    : FdHolder(SEX_SYSCALL(epoll_create1(flags ^ NO_CLOSE_ON_EXEC)).unwrap()) {
   }
 
   void Add(FileDescriptor fd, Cookie cookie, EventMask events = EMPTY) {
@@ -51,7 +51,7 @@ class EventPoller : protected FdHolder {
   size_t TimedPoll(std::span<Event> events, int millis) {
     const auto MaxSize = events.size();
     std::vector<epoll_event> evs(MaxSize);  // TODO: Get rid of dynamic allocations
-    const size_t polled = SEX_SYSCALL(epoll_wait(GetInt(), evs.data(), MaxSize, millis));
+    const size_t polled = SEX_SYSCALL(epoll_wait(GetInt(), evs.data(), MaxSize, millis)).unwrap();
     for (size_t i = 0; i < polled; ++i) {
       events[i].events = static_cast<EventMask>(evs[i].events);
       events[i].cookie = evs[i].data.ptr;
@@ -70,7 +70,7 @@ class EventPoller : protected FdHolder {
  private:
   void EpollCtl(FileDescriptor fd, Cookie cookie, EventMask events, int op) {
     auto event = CreateEpollEvent(cookie, events);
-    SEX_SYSCALL(epoll_ctl(GetInt(), op, int(fd), &event));
+    SEX_SYSCALL(epoll_ctl(GetInt(), op, int(fd), &event)).unwrap();
   }
 
   static epoll_event CreateEpollEvent(Cookie cookie, EventMask flags) {
