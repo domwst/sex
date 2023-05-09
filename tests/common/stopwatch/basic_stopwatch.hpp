@@ -11,7 +11,7 @@ class BasicStopwatch {
   using time_point = typename Clock::time_point;
   static constexpr bool is_steady = Clock::is_steady;
 
-  BasicStopwatch() : clock_(Clock()), start_(clock_.now()) {
+  BasicStopwatch() : clock_(), start_(clock_.now()) {
   }
 
   auto TimePassed() {

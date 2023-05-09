@@ -6,13 +6,13 @@ class ExitStatus {
   friend class ProcessKnob;
 
  public:
-  [[nodiscard]] bool IsExited() const;
+  [[nodiscard]] bool isExited() const;
 
-  [[nodiscard]] bool IsSignaled() const;
+  [[nodiscard]] bool isSignaled() const;
 
-  [[nodiscard]] int ExitCode() const;
+  [[nodiscard]] int exitCode() const;
 
-  [[nodiscard]] int Signal() const;
+  [[nodiscard]] int signal() const;
 
  private:
   explicit ExitStatus(int status);

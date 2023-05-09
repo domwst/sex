@@ -1,8 +1,9 @@
 #include "cgroup_controller.hpp"
 
-#include <sex/util/once.hpp>
-
 #include <sex/detail/syscall.hpp>
+
+#include <sex/util/once.hpp>
+#include <sex/util/flock.hpp>
 
 #include <fcntl.h>
 #include <fstream>
@@ -18,79 +19,105 @@ const fs::path CgroupController::SubtreeControl = "cgroup.subtree_control";
 namespace {
 
 sex::util::Once InitializeParentCgroup = [] {
-  if (fs::exists(CgroupController::SboxCgroup)) {
+  auto check = []() -> bool {
+    return fs::exists(CgroupController::SboxCgroup);
+  };
+
+  util::FileLockGuard lk(CgroupController::SboxCgroup, util::FileLockGuard::RLock);
+  if (check()) {
     return;
   }
+  lk.unlock();
+  lk.lock(util::FileLockGuard::RWLock);
+  if (check()) {
+    return;
+  }
+
   constexpr std::string_view EssentialControllers = "+memory +pids";
-  std::ofstream(
+  SEX_ASSERT((std::ofstream(
     CgroupController::CgroupsPath / CgroupController::SubtreeControl)
-    << EssentialControllers;
+    << EssentialControllers).good());
   fs::create_directory(CgroupController::SboxCgroup);
-  // Potential race here: if another process checks that cgroup folder is created, it
-  // would find out that it is created and would think that everything is
-  // set up, but it isn't until the next line
-  std::ofstream(
+  SEX_ASSERT((std::ofstream(
     CgroupController::SboxCgroup / CgroupController::SubtreeControl)
-    << EssentialControllers;
+    << EssentialControllers).good());
 };
 
 }
 
-CgroupController::CgroupController(std::string_view cgroup_name,
+CgroupController::CgroupController(std::string_view cgroupName,
                                    const Builder& options)
-  : CgroupPath_(SboxCgroup / cgroup_name) {
+  : cgroupPath_(SboxCgroup / cgroupName) {
 
   InitializeParentCgroup();
 
-  fs::create_directory(CgroupPath_);
-  if (uint64_t mem_limit = options.GetMemoryLimit(); mem_limit !=
-                                                     Builder::NoLimit) {
-    SetMemoryLimit(mem_limit);
+  fs::create_directory(cgroupPath_);
+  if (uint64_t memLimitMax = options.getMemoryLimitMax(); memLimitMax !=
+                                                          Builder::NoLimit) {
+    setMemoryLimitMax(memLimitMax);
   }
-  if (uint64_t pids_limit = options.GetPidsLimit(); pids_limit !=
-                                                    Builder::NoLimit) {
-    SetPidsLimit(pids_limit);
+  if (uint64_t memLimitHigh = options.getMemoryLimitHigh(); memLimitHigh !=
+                                                          Builder::NoLimit) {
+    setMemoryLimitHigh(memLimitHigh);
+  }
+  if (uint64_t pidsLimit = options.getPidsLimit(); pidsLimit !=
+                                                   Builder::NoLimit) {
+    setPidsLimit(pidsLimit);
   }
 }
 
-void CgroupController::SetMemoryLimit(uint64_t newval) {
-  std::ofstream out(CgroupPath_ / memory_max);
-  if (newval == Builder::NoLimit) {
+void CgroupController::setMemoryLimitMax(uint64_t newVal) {
+  std::ofstream out(cgroupPath_ / memoryMax);
+  if (newVal == Builder::NoLimit) {
     out << "max";
   } else {
-    out << newval;
+    out << newVal;
   }
+  SEX_ASSERT(out.good());
 }
 
-void CgroupController::SetPidsLimit(uint64_t newval) {
-  std::ofstream out(CgroupPath_ / pids_max);
-  if (newval == Builder::NoLimit) {
+void CgroupController::setMemoryLimitHigh(uint64_t newVal) {
+  std::ofstream out(cgroupPath_ / memory_high);
+  if (newVal == Builder::NoLimit) {
     out << "max";
   } else {
-    out << newval;
+    out << newVal;
   }
+  SEX_ASSERT(out.good());
 }
 
-uint64_t CgroupController::GetCurrentMemory() {
+void CgroupController::setPidsLimit(uint64_t newVal) {
+  std::ofstream out(cgroupPath_ / pids_max);
+  if (newVal == Builder::NoLimit) {
+    out << "max";
+  } else {
+    out << newVal;
+  }
+  SEX_ASSERT(out.good());
+}
+
+uint64_t CgroupController::getCurrentMemory() {
   uint64_t ret;
-  std::ifstream(CgroupPath_ / memory_current) >> ret;
+  std::ifstream inf(cgroupPath_ / memory_current);
+  inf >> ret;
+  SEX_ASSERT(inf.good());
   return ret;
 }
 
-void CgroupController::CgroupKill() {
-  std::ofstream(CgroupPath_ / cgroup_kill) << "1";
+void CgroupController::cgroupKill() {
+  SEX_ASSERT((std::ofstream(cgroupPath_ / cgroup_kill) << "1").good());
 }
 
-FdHolder CgroupController::GetCgroupFd() const {
-  return FdHolder(SEX_SYSCALL(open(GetCgroupPath().c_str(), O_PATH | O_RDONLY | O_CLOEXEC)).unwrap());
+FdHolder CgroupController::getCgroupFd() const {
+  return FdHolder(SEX_SYSCALL(open(getCgroupPath().c_str(), O_PATH | O_RDONLY | O_CLOEXEC)).unwrap());
 }
 
 CgroupController::~CgroupController() {
-  fs::remove(CgroupPath_);
+  fs::remove(cgroupPath_);
 }
 
-const fs::path& CgroupController::GetCgroupPath() const {
-  return CgroupPath_;
+const fs::path& CgroupController::getCgroupPath() const {
+  return cgroupPath_;
 }
 
 }  // sex

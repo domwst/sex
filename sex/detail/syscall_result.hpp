@@ -3,52 +3,71 @@
 #include <variant>
 #include <exception>
 #include <string>
+#include <memory>
 
-class SyscallError : std::exception {
+#include <sex/detail/exceptions/exception_concept.hpp>
+#include <sex/detail/exceptions/syscall_error.hpp>
+#include <sex/detail/macros.hpp>
+
+// TODO: Replace monostate with Unit
+template<class TResult = std::monostate>
+class [[nodiscard]] Result {
 public:
-    explicit SyscallError(std::string what) : what_(std::move(what)) {
-    }
+  Result() = delete;
 
-    [[nodiscard]] const char* what() const noexcept override {
-        return what_.data();
+  [[nodiscard]] bool isError() const {
+    return std::holds_alternative<std::exception_ptr>(result_);
+  }
+
+  [[nodiscard]] std::exception_ptr getError() const {
+    return std::get<std::exception_ptr>(result_);
+  }
+
+  [[nodiscard]] bool isOk() const {
+    return std::holds_alternative<TResult>(result_);
+  }
+
+  [[nodiscard]] TResult unwrap() const {
+    ensure();
+    return get<TResult>(result_);
+  }
+
+  void ensure() const {
+    if (isError()) {
+      std::rethrow_exception(get<std::exception_ptr>(result_));
     }
+  }
+
+  static Result Ok(TResult result) {
+    return Result(std::move(result));
+  }
+
+  template<class U = TResult, class = std::enable_if_t<std::is_same_v<U, std::monostate>>>
+  static Result Ok() {
+    return Result(std::monostate{});
+  }
+
+  template<CException Error>
+  static Result Error(Error&& err) {
+    return Result(std::make_exception_ptr(std::forward<Error>(err)));
+  }
+
+  static Result FromCurrentException() {
+    return Result(std::current_exception());
+  }
+
+  template<class U>
+  static Result ErrorFrom(const Result<U>& r) {
+    SEX_ASSERT(r.isError());
+    return Result(r.getError());
+  }
 
 private:
-    std::string what_;
-};
+  explicit Result(TResult result) : result_(std::move(result)) {
+  }
 
-template<class TResult>
-class SyscallResult {
-public:
-    SyscallResult(TResult result) : result_(std::move(result)) {  // NOLINT
-    }
+  explicit Result(std::exception_ptr error) : result_(std::move(error)) {
+  }
 
-    SyscallResult(const SyscallError& error) : result_(error) {  // NOLINT
-    }
-
-    SyscallResult() = delete;
-
-    [[nodiscard]] bool isError() const {
-        return std::holds_alternative<SyscallError>(result_);
-    }
-
-    [[nodiscard]] bool isOk() const {
-        return std::holds_alternative<TResult>(result_);
-    }
-
-    [[nodiscard]] TResult unwrap() const {
-        ensure();
-        return get<TResult>(result_);
-    }
-
-    void ensure() const {
-        if (isError()) {
-            throw get<SyscallError>(result_);
-        }
-    }
-
-private:
-    std::variant<TResult, SyscallError> result_;
-
-    static_assert(!std::is_same_v<TResult, SyscallError>, "TResult can't be SyscallError");
+  std::variant<TResult, std::exception_ptr> result_;
 };

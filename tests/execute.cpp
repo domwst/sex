@@ -8,7 +8,7 @@
 namespace ut = boost::ut;
 
 static bool ExitedWith(const sex::ExitStatus& status, int exit_code) {
-  return status.IsExited() && status.ExitCode() == exit_code;
+  return status.isExited() && status.exitCode() == exit_code;
 }
 
 static bool ExitedWithZero(const sex::ExitStatus& status) {
@@ -16,7 +16,7 @@ static bool ExitedWithZero(const sex::ExitStatus& status) {
 }
 
 static bool KilledWith(const sex::ExitStatus& status, int signal) {
-  return status.IsSignaled() && status.Signal() == signal;
+  return status.isSignaled() && status.signal() == signal;
 }
 
 static ut::suite execute = [] {
@@ -30,7 +30,7 @@ static ut::suite execute = [] {
       expect(neq(cur_pid, getpid()));
     }, {});
 
-    auto status = std::move(handle).Wait();
+    auto status = std::move(handle).wait();
     expect(ExitedWithZero(status));
   };
 
@@ -39,7 +39,7 @@ static ut::suite execute = [] {
       _exit(12);
     }, {});
 
-    auto status = std::move(handle).Wait();
+    auto status = std::move(handle).wait();
     expect(ExitedWith(status, 12));
   };
 
@@ -48,7 +48,7 @@ static ut::suite execute = [] {
       SEX_SYSCALL(kill(getpid(), SIGTERM)).ensure();
     }, {});
 
-    auto status = std::move(handle).Wait();
+    auto status = std::move(handle).wait();
     expect(KilledWith(status, SIGTERM));
   };
 
@@ -57,7 +57,7 @@ static ut::suite execute = [] {
       expect(eq(getpid(), 1));
     }, sex::ExecuteArgs{}.NewPidNS().NewUserNS());
 
-    auto status = std::move(handle).Wait();
+    auto status = std::move(handle).wait();
     expect(ExitedWithZero(status));
   };
 
@@ -72,8 +72,8 @@ static ut::suite execute = [] {
     int real_child_pid;
     SEX_ASSERT(read(pipe.out.GetInt(), &real_child_pid, sizeof(int)) == sizeof(int));
 
-    expect(eq(real_child_pid, handle.Pid()));
+    expect(eq(real_child_pid, handle.getPid()));
 
-    std::move(handle).Wait();
+    std::move(handle).wait();
   };
 };

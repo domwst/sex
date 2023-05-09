@@ -12,11 +12,11 @@ class IExecuteHooks;
 
 class ProcessKnob {
  public:
-  [[nodiscard]] int GetPidFd() const;
+  [[nodiscard]] FileDescriptor getPidFd() const;
 
-  ExitStatus Wait()&&;
+  ExitStatus wait()&&;
 
-  [[nodiscard]] int Pid() const;
+  [[nodiscard]] int getPid() const;
 
   friend ProcessKnob Execute(Routine f, ExecuteArgs args, IExecuteHooks& hooks);
 

@@ -25,7 +25,7 @@ FdHolder& FdHolder::operator=(FdHolder&& other) noexcept {
   return *this;
 }
 
-FdHolder::operator FileDescriptor() const noexcept {
+FdHolder::operator FileDescriptor() const& noexcept {
   return fd_;
 }
 

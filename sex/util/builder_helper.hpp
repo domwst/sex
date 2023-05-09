@@ -5,11 +5,11 @@ private:                                        \
     Type ExternalName = DefaultValue;           \
                                                 \
 public:                                         \
-    Type Get##ExternalName() const {            \
+    Type get##ExternalName() const {            \
         return ExternalName;                    \
     }                                           \
                                                 \
-    auto& Set##ExternalName(Type __new_val) {   \
+    auto& set##ExternalName(Type __new_val) {   \
         ExternalName = __new_val;               \
         return *this;                           \
     }

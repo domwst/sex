@@ -80,9 +80,9 @@ static ut::suite timer_fd = [] {
     }, {});
 
     std::this_thread::sleep_for(100ms);
-    kill(handle.Pid(), SIGKILL);
-    auto status = std::move(handle).Wait();
-    expect(status.IsSignaled() && that % status.Signal() == SIGKILL);
+    kill(handle.getPid(), SIGKILL);
+    auto status = std::move(handle).wait();
+    expect(status.isSignaled() && that % status.signal() == SIGKILL);
 
     char c;
     expect(that % SEX_SYSCALL(read(pipe.out.GetInt(), &c, sizeof(c))).unwrap() == 0);

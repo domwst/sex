@@ -1,3 +1,4 @@
+#include <iostream>
 #include "execute.hpp"
 
 namespace sex {
@@ -19,9 +20,11 @@ ProcessKnob Execute(Routine f, ExecuteArgs args, IExecuteHooks& hooks) {
     try {
       f();
       _exit(0);
+    } catch(std::exception& e) {
+      std::cerr << "Exception caught: " << e.what() << std::endl;
     } catch (...) {
-      _exit(127);
     }
+    _exit(127);
   }
 
   hooks.AfterCloneParent(cl_args, child_pid);

@@ -3,43 +3,65 @@
 #include <sex/util/once.hpp>
 
 #include <sex/detail/syscall.hpp>
+#include <sex/util/flock.hpp>
 
 #include <unistd.h>
 
-const fs::path Container::TmpSbox = fs::temp_directory_path() / "sbox";
+const fs::path Container::TmpSbox = (fs::temp_directory_path() / "sbox").string();
 
 namespace {
 
 sex::util::Once Initialize = [] {
-  if (!fs::exists(Container::TmpSbox)) {
-    fs::create_directory(Container::TmpSbox);
+  auto check = []() -> bool {
+    if (fs::exists(Container::TmpSbox)) {
+      return true;
+    }
+    return false;
+  };
+
+  sex::util::FileLockGuard lk(Container::TmpSbox.parent_path(), sex::util::FileLockGuard::RLock);
+  if (check()) {
+    return;
   }
+  lk.unlock();
+  lk.lock(sex::util::FileLockGuard::RWLock);
+  if (check()) {
+    return;
+  }
+
+  fs::create_directory(Container::TmpSbox);
 };
 
 }
 
 Container::Container(const std::string& name)
-  : ContainerPath_(TmpSbox / name) {
-
-  Initialize();
-  fs::create_directory(ContainerPath_);
+  : Container(name, TmpSbox) {
 }
 
 Container::Container(const std::string& name, const fs::path& containers_path)
-  : ContainerPath_(containers_path / name) {
+  : containerPath_(containers_path / name) {
 
-  fs::create_directory(ContainerPath_);
+  Initialize();
+  fs::create_directory(containerPath_);
 }
 
-void Container::Enter() const {
-  SEX_SYSCALL(chroot(GetPath().c_str())).ensure();
+void Container::enter() const {
+  SEX_SYSCALL(chroot(getPath().c_str())).ensure();
   SEX_SYSCALL(chdir("/")).ensure();
 }
 
-const fs::path& Container::GetPath() const {
-  return ContainerPath_;
+void Container::remove() {
+  assert(!removed_);
+  fs::remove_all(containerPath_);
+  removed_ = true;
+}
+
+const fs::path& Container::getPath() const {
+  return containerPath_;
 }
 
 Container::~Container() {
-  fs::remove_all(ContainerPath_);
+  if (!removed_) {
+    remove();
+  }
 }

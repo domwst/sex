@@ -22,9 +22,9 @@ class CgroupController {
 
     Builder(const Builder& other) = default;
 
-   AddBuilderFieldDefault(uint64_t, MemoryLimit,
-                          NoLimit) // CAUTION: This REALLY slows down process execution
-   AddBuilderFieldDefault(uint64_t, PidsLimit, NoLimit)
+    AddBuilderFieldDefault(uint64_t, MemoryLimitHigh, NoLimit)
+    AddBuilderFieldDefault(uint64_t, MemoryLimitMax, NoLimit)
+    AddBuilderFieldDefault(uint64_t, PidsLimit, NoLimit)
   };
 
   CgroupController() = delete;
@@ -33,19 +33,19 @@ class CgroupController {
 
   CgroupController(CgroupController&&) = delete;
 
-  CgroupController(std::string_view cgroup_name, const Builder& options);
+  CgroupController(std::string_view cgroupName, const Builder& options);
 
-  void SetMemoryLimit(
-    uint64_t newval); // CAUTION: This REALLY slows down process execution
-  void SetPidsLimit(uint64_t newval);
+  void setMemoryLimitHigh(uint64_t newVal);
+  void setMemoryLimitMax(uint64_t newVal);
+  void setPidsLimit(uint64_t newVal);
 
-  uint64_t GetCurrentMemory();
+  uint64_t getCurrentMemory();
 
-  void CgroupKill();
+  void cgroupKill();
 
-  FdHolder GetCgroupFd() const;
+  [[nodiscard]] FdHolder getCgroupFd() const;
 
-  const fs::path& GetCgroupPath() const;
+  [[nodiscard]] const fs::path& getCgroupPath() const;
 
   ~CgroupController();
 
@@ -55,9 +55,10 @@ class CgroupController {
 
 
  private:
-  const fs::path CgroupPath_;
+  const fs::path cgroupPath_;
 
-  static constexpr std::string_view memory_max = "memory.max";
+  static constexpr std::string_view memoryMax = "memory.max";
+  static constexpr std::string_view memory_high = "memory.high";
   static constexpr std::string_view memory_current = "memory.current";
   static constexpr std::string_view pids_max = "pids.max";
   static constexpr std::string_view cgroup_kill = "cgroup.kill";

@@ -16,17 +16,18 @@ class Container {
 
   explicit Container(const std::string& name);
 
-  Container(
-    const std::string& name,
-    const fs::path& where);
+  Container(const std::string& name, const fs::path& where);
 
-  void Enter() const;
+  void enter() const;
 
-  [[nodiscard]] const fs::path& GetPath() const;
+  void remove();
+
+  [[nodiscard]] const fs::path& getPath() const;
 
   ~Container();
 
   static const fs::path TmpSbox;
  private:
-  const fs::path ContainerPath_;
+  const fs::path containerPath_;
+  bool removed_{false};
 };

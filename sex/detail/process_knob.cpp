@@ -14,17 +14,17 @@ ProcessKnob::ProcessKnob(int pid, FdHolder pid_fd)
 ProcessKnob::ProcessKnob(int pid) : ProcessKnob(pid, FdHolder()) {
 }
 
-int ProcessKnob::GetPidFd() const {
-  return FileDescriptor(pid_fd_).GetInt();
+FileDescriptor ProcessKnob::getPidFd() const {
+  return FileDescriptor(pid_fd_);
 }
 
-ExitStatus ProcessKnob::Wait() && {  // NOLINT
+ExitStatus ProcessKnob::wait() && {  // NOLINT
   int status;
   SEX_ASSERT(waitpid(pid_, &status, __WALL) == pid_);
   return ExitStatus(status);
 }
 
-int ProcessKnob::Pid() const {
+int ProcessKnob::getPid() const {
   return pid_;
 }
 
