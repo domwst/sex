@@ -5,29 +5,33 @@
 
 namespace fs = std::filesystem;
 
+namespace sex {
+
 class Container {
 
- public:
+public:
   Container() = delete;
 
-  Container(const Container&) = delete;
+  Container(const Container &) = delete;
 
-  Container(Container&&) = delete;
+  Container(Container &&) = delete;
 
-  explicit Container(const std::string& name);
+  explicit Container(const std::string &name);
 
-  Container(const std::string& name, const fs::path& where);
+  Container(const std::string &name, const fs::path &where);
 
   void enter() const;
 
   void remove();
 
-  [[nodiscard]] const fs::path& getPath() const;
+  [[nodiscard]] const fs::path &getPath() const;
 
   ~Container();
 
   static const fs::path TmpSbox;
- private:
+private:
   const fs::path containerPath_;
   bool removed_{false};
 };
+
+}  // namespace sex

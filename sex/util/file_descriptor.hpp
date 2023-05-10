@@ -17,14 +17,14 @@ class FileDescriptor {
   }
 
   [[nodiscard]] explicit operator int() const noexcept {
-    return GetInt();
+    return getInt();
   }
 
-  [[nodiscard]] int GetInt() const noexcept {
+  [[nodiscard]] int getInt() const noexcept {
     return fd_;
   }
 
-  int Reset(int fd = None) noexcept {
+  int reset(int fd = None) noexcept {
     return std::exchange(fd_, fd);
   }
 

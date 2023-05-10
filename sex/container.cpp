@@ -7,6 +7,8 @@
 
 #include <unistd.h>
 
+namespace sex {
+
 const fs::path Container::TmpSbox = (fs::temp_directory_path() / "sbox").string();
 
 namespace {
@@ -34,12 +36,12 @@ sex::util::Once Initialize = [] {
 
 }
 
-Container::Container(const std::string& name)
-  : Container(name, TmpSbox) {
+Container::Container(const std::string &name)
+        : Container(name, TmpSbox) {
 }
 
-Container::Container(const std::string& name, const fs::path& containers_path)
-  : containerPath_(containers_path / name) {
+Container::Container(const std::string &name, const fs::path &containers_path)
+        : containerPath_(containers_path / name) {
 
   Initialize();
   fs::create_directory(containerPath_);
@@ -56,7 +58,7 @@ void Container::remove() {
   removed_ = true;
 }
 
-const fs::path& Container::getPath() const {
+const fs::path &Container::getPath() const {
   return containerPath_;
 }
 
@@ -65,3 +67,5 @@ Container::~Container() {
     remove();
   }
 }
+
+}  // namespace sex

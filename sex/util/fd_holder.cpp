@@ -17,7 +17,7 @@ void FdHolder::Swap(FdHolder& other) noexcept {
 }
 
 int FdHolder::getInt() const noexcept {
-  return fd_.GetInt();
+  return fd_.getInt();
 }
 
 FdHolder& FdHolder::operator=(FdHolder&& other) noexcept {
@@ -31,14 +31,14 @@ FdHolder::operator FileDescriptor() const& noexcept {
 
 void FdHolder::Reset(FileDescriptor new_fd) {
   if (fd_) {
-    SEX_SYSCALL(close(fd_.GetInt())).ensure();
+    SEX_SYSCALL(close(fd_.getInt())).ensure();
   }
   fd_ = new_fd;
 }
 
 FileDescriptor FdHolder::Release() noexcept {
   auto f = FileDescriptor(*this);
-  fd_.Reset();
+  fd_.reset();
   return f;
 }
 
