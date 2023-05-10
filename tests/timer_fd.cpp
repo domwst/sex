@@ -13,11 +13,11 @@
 
 namespace ut = boost::ut;
 
-using Duration = sex::TimerFd::Duration;
+using Duration = sex::util::TimerFd::Duration;
 
 static constexpr Duration time_eps = std::chrono::milliseconds(10);
 
-void ExpectExpireIn(sex::TimerFd& timer, Duration expected,
+void ExpectExpireIn(sex::util::TimerFd& timer, Duration expected,
                     Duration precision = time_eps) {
 
   using namespace ut;
@@ -35,6 +35,7 @@ void ExpectExpireIn(sex::TimerFd& timer, Duration expected,
 static ut::suite timerFd = [] {
   using namespace ut;
   using namespace sex;
+  using namespace util;
   using namespace std::chrono_literals;
 
   "simple_1"_test = [] {

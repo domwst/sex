@@ -7,7 +7,7 @@
 #include <sys/timerfd.h>
 #include <unistd.h>
 
-namespace sex {
+namespace sex::util {
 
 class TimerFd : protected FdHolder {
  public:
@@ -99,4 +99,4 @@ class TimerFd : protected FdHolder {
   }
 };
 
-}  // sex
+}  // sex::util
