@@ -8,7 +8,7 @@
 
 #include <sys/epoll.h>
 
-namespace sex {
+namespace sex::util {
 
 class EventPoller : protected FdHolder {
  public:
@@ -83,4 +83,4 @@ class EventPoller : protected FdHolder {
   }
 };
 
-}  // namespace sex
+}  // namespace sex::util

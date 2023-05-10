@@ -16,7 +16,7 @@ using namespace std::chrono_literals;
 
 static suite fileLockGuard = [] {
   "flock_allows_several_readers"_test = [] {
-    FdHolder fd(SEX_SYSCALL(open("test", O_RDONLY | O_CREAT | O_EXCL, 0644)).unwrap());
+    util::FdHolder fd(SEX_SYSCALL(open("test", O_RDONLY | O_CREAT | O_EXCL, 0644)).unwrap());
 
     std::atomic<uint> rcnt{0};
 
@@ -43,7 +43,7 @@ static suite fileLockGuard = [] {
   };
 
   "write_lock_excludes_readers"_test = [] {
-    FdHolder(SEX_SYSCALL(open("test", O_RDONLY | O_EXCL | O_CREAT, 0644)).unwrap());
+    util::FdHolder(SEX_SYSCALL(open("test", O_RDONLY | O_EXCL | O_CREAT, 0644)).unwrap());
 
     std::atomic<uint> rcount{0};
     std::atomic<uint> wcount{0};

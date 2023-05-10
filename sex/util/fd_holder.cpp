@@ -4,7 +4,7 @@
 
 #include <unistd.h>
 
-namespace sex {
+namespace sex::util {
 
 FdHolder::FdHolder(int fd) noexcept: fd_(fd) {}
 
@@ -46,4 +46,4 @@ FdHolder::~FdHolder() {
   Reset();
 }
 
-}
+}  // namespace sex::util

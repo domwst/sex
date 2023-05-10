@@ -2,7 +2,7 @@
 
 #include <sex/detail/function2/function2.hpp>
 
-namespace sex {
+namespace sex::util {
 
 template<class Signature>
 using UniqueFunction = fu2::function_base<
@@ -14,4 +14,4 @@ using UniqueFunction = fu2::function_base<
   /* Signatures= */               Signature
 >;
 
-}  // sex
+}  // sex::util

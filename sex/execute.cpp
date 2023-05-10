@@ -3,7 +3,7 @@
 
 namespace sex {
 
-ProcessKnob Execute(Routine f, ExecuteArgs args, IExecuteHooks& hooks) {
+ProcessKnob Execute(detail::Routine f, ExecuteArgs args, IExecuteHooks& hooks) {
   auto cl_args = *args.GetCloneArgs();
 
   int pidfd = -1;
@@ -28,16 +28,16 @@ ProcessKnob Execute(Routine f, ExecuteArgs args, IExecuteHooks& hooks) {
   }
 
   hooks.AfterCloneParent(cl_args, child_pid);
-  FdHolder pfd;
+  util::FdHolder pfd;
 
   if (cl_args.flags & CLONE_PIDFD) {
-    pfd.Reset(FileDescriptor(pidfd));
+    pfd.Reset(util::FileDescriptor(pidfd));
   }
 
   return {child_pid, std::move(pfd)};
 }
 
-ProcessKnob Execute(Routine f, ExecuteArgs args, IExecuteHooks&& hooks) {
+ProcessKnob Execute(detail::Routine f, ExecuteArgs args, IExecuteHooks&& hooks) {
   return Execute(std::move(f), args, hooks);
 }
 

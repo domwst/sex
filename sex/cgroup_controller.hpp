@@ -43,7 +43,7 @@ class CgroupController {
 
   void cgroupKill();
 
-  [[nodiscard]] FdHolder getCgroupFd() const;
+  [[nodiscard]] util::FdHolder getCgroupFd() const;
 
   [[nodiscard]] const fs::path& getCgroupPath() const;
 

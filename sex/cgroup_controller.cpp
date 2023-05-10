@@ -108,8 +108,8 @@ void CgroupController::cgroupKill() {
   SEX_ASSERT((std::ofstream(cgroupPath_ / cgroup_kill) << "1").good());
 }
 
-FdHolder CgroupController::getCgroupFd() const {
-  return FdHolder(SEX_SYSCALL(open(getCgroupPath().c_str(), O_PATH | O_RDONLY | O_CLOEXEC)).unwrap());
+util::FdHolder CgroupController::getCgroupFd() const {
+  return util::FdHolder(SEX_SYSCALL(open(getCgroupPath().c_str(), O_PATH | O_RDONLY | O_CLOEXEC)).unwrap());
 }
 
 CgroupController::~CgroupController() {

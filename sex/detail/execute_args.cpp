@@ -44,7 +44,7 @@ DEFINE_EXECUTE_FLAG(UTSNS, CLONE_NEWUTS)
 
 DEFINE_EXECUTE_FLAG(TimeNS, CLONE_NEWTIME)
 
-ExecuteArgs& ExecuteArgs::IntoCgroup(FileDescriptor cfd) {
+ExecuteArgs& ExecuteArgs::IntoCgroup(util::FileDescriptor cfd) {
   args.cgroup = cfd.GetInt();
   return SetFlag(CLONE_INTO_CGROUP);
 }

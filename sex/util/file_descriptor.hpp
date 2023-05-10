@@ -2,7 +2,7 @@
 
 #include <utility>
 
-namespace sex {
+namespace sex::util {
 
 // Non-owning lightweight file descriptor handle
 class FileDescriptor {
@@ -34,4 +34,4 @@ class FileDescriptor {
   int fd_ = None;
 };
 
-}  // sex
+}  // sex::util

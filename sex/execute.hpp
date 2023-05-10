@@ -17,8 +17,8 @@
 
 namespace sex {
 
-ProcessKnob Execute(Routine f, ExecuteArgs args, IExecuteHooks& hooks);
+ProcessKnob Execute(detail::Routine f, ExecuteArgs args, IExecuteHooks& hooks);
 
-ProcessKnob Execute(Routine f, ExecuteArgs args, IExecuteHooks&& hooks = ExecuteHooksDefault{});
+ProcessKnob Execute(detail::Routine f, ExecuteArgs args, IExecuteHooks&& hooks = ExecuteHooksDefault{});
 
 }  // namespace sex

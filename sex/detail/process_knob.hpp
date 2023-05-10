@@ -12,21 +12,21 @@ class IExecuteHooks;
 
 class ProcessKnob {
  public:
-  [[nodiscard]] FileDescriptor getPidFd() const;
+  [[nodiscard]] util::FileDescriptor getPidFd() const;
 
   ExitStatus wait()&&;
 
   [[nodiscard]] int getPid() const;
 
-  friend ProcessKnob Execute(Routine f, ExecuteArgs args, IExecuteHooks& hooks);
+  friend ProcessKnob Execute(detail::Routine f, ExecuteArgs args, IExecuteHooks& hooks);
 
  private:
-  ProcessKnob(int pid, FdHolder pid_fd);
+  ProcessKnob(int pid, util::FdHolder pid_fd);
 
   explicit ProcessKnob(int pid);
 
   int pid_;
-  FdHolder pid_fd_;
+  util::FdHolder pid_fd_;
 };
 
 }  // sex

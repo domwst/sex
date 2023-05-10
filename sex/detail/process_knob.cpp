@@ -7,15 +7,15 @@
 
 namespace sex {
 
-ProcessKnob::ProcessKnob(int pid, FdHolder pid_fd)
+ProcessKnob::ProcessKnob(int pid, util::FdHolder pid_fd)
   : pid_(pid), pid_fd_(std::move(pid_fd)) {
 }
 
-ProcessKnob::ProcessKnob(int pid) : ProcessKnob(pid, FdHolder()) {
+ProcessKnob::ProcessKnob(int pid) : ProcessKnob(pid, util::FdHolder()) {
 }
 
-FileDescriptor ProcessKnob::getPidFd() const {
-  return FileDescriptor(pid_fd_);
+util::FileDescriptor ProcessKnob::getPidFd() const {
+  return util::FileDescriptor(pid_fd_);
 }
 
 ExitStatus ProcessKnob::wait() && {  // NOLINT

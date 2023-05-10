@@ -2,8 +2,8 @@
 
 #include "sex/util/unique_function.hpp"
 
-namespace sex {
+namespace sex::detail {
 
-using Routine = UniqueFunction<void()>;
+using Routine = util::UniqueFunction<void()>;
 
-}  // sex
+}  // sex::detail

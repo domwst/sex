@@ -2,7 +2,7 @@
 
 #include <sex/util/file_descriptor.hpp>
 
-namespace sex {
+namespace sex::util {
 
 class FdHolder {
  private:
@@ -35,4 +35,4 @@ class FdHolder {
   ~FdHolder();
 };
 
-}
+}  // namespace sex::util
