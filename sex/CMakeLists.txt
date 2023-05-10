@@ -11,4 +11,4 @@ enable_language(ASM)
 
 add_library(sex STATIC ${LIB_CXX_SOURCES} ${LIB_ASM_SOURCES} ${LIB_HEADERS})
 target_include_directories(sex PUBLIC ${LIB_INCLUDE_PATH})
-target_link_libraries(sex PUBLIC pthread fmt)
+target_link_libraries(sex PRIVATE fmt)
