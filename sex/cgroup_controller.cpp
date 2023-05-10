@@ -23,7 +23,7 @@ sex::util::Once InitializeParentCgroup = [] {
     return fs::exists(CgroupController::SboxCgroup);
   };
 
-  util::FileLockGuard lk(CgroupController::SboxCgroup, util::FileLockGuard::RLock);
+  util::FileLockGuard lk(CgroupController::SboxCgroup.parent_path(), util::FileLockGuard::RLock);
   if (check()) {
     return;
   }
