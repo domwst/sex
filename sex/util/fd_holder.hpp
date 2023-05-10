@@ -23,7 +23,7 @@ class FdHolder {
 
   void Swap(FdHolder& other) noexcept;
 
-  [[nodiscard]] int GetInt() const noexcept;
+  [[nodiscard]] int getInt() const noexcept;
 
   // NOLINTNEXTLINE
   [[nodiscard]] operator FileDescriptor() const& noexcept;

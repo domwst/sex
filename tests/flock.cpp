@@ -14,7 +14,7 @@ using namespace sex;
 using namespace boost::ut;
 using namespace std::chrono_literals;
 
-static suite file_lock_guard = [] {
+static suite fileLockGuard = [] {
   "flock_allows_several_readers"_test = [] {
     FdHolder fd(SEX_SYSCALL(open("test", O_RDONLY | O_CREAT | O_EXCL, 0644)).unwrap());
 

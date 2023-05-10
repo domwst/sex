@@ -41,7 +41,7 @@ public:
         flag = LOCK_EX;
         break;
     }
-    SEX_SYSCALL(flock(fd_.GetInt(), flag)).ensure();
+    SEX_SYSCALL(flock(fd_.getInt(), flag)).ensure();
     current_state_ = toState(lock_type);
   }
 
@@ -49,7 +49,7 @@ public:
     if (current_state_ == State::Unlocked) {
       return;
     }
-    SEX_SYSCALL(flock(fd_.GetInt(), LOCK_UN)).ensure();
+    SEX_SYSCALL(flock(fd_.getInt(), LOCK_UN)).ensure();
     current_state_ = State::Unlocked;
   }
 

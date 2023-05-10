@@ -31,36 +31,36 @@ class TimerFd : protected FdHolder {
 
   using FdHolder::operator FileDescriptor;
 
-  uint64_t Wait() const {
+  uint64_t wait() const {
     uint64_t cnt = 0;
-    auto ret = read(GetInt(), &cnt, sizeof(cnt));
+    auto ret = read(getInt(), &cnt, sizeof(cnt));
     SEX_ASSERT(ret == sizeof(cnt) || (ret == -1 && errno == EAGAIN));
     return cnt;
   }
 
-  TimerSpec Cancel() noexcept {
-    return Set(Duration::zero());
+  TimerSpec cancel() noexcept {
+    return set(Duration::zero());
   }
 
-  TimerSpec Set(Duration first_expiration) noexcept {
-    return Set(first_expiration, Duration::zero());
+  TimerSpec set(Duration first_expiration) noexcept {
+    return set(first_expiration, Duration::zero());
   }
 
-  TimerSpec Set(TimerSpec spec) noexcept {
+  TimerSpec set(TimerSpec spec) noexcept {
     itimerspec tmp = ToITimerSpec(spec);
     itimerspec prev{};
 
-    SEX_SYSCALL(timerfd_settime(GetInt(), 0, &tmp, &prev)).ensure();
+    SEX_SYSCALL(timerfd_settime(getInt(), 0, &tmp, &prev)).ensure();
     return FromITimerSpec(prev);
   }
 
-  TimerSpec Set(Duration first_expiration, Duration interval) noexcept {
-    return Set({.first_expiration = first_expiration, .interval = interval});
+  TimerSpec set(Duration first_expiration, Duration interval) noexcept {
+    return set({.first_expiration = first_expiration, .interval = interval});
   }
 
-  [[nodiscard]] TimerSpec GetTimerSpec() const {
+  [[nodiscard]] TimerSpec getTimerSpec() const {
     itimerspec spec{};
-    SEX_SYSCALL(timerfd_gettime(GetInt(), &spec)).ensure();
+    SEX_SYSCALL(timerfd_gettime(getInt(), &spec)).ensure();
     return FromITimerSpec(spec);
   }
 
@@ -88,11 +88,11 @@ class TimerFd : protected FdHolder {
   }
 
   static itimerspec ToITimerSpec(TimerSpec spec) {
-    auto [first_expiration, interval] = spec;
+    auto [firstExpiration, interval] = spec;
 
     itimerspec result = {
       .it_interval = ToTimeSpec(interval),
-      .it_value = ToTimeSpec(first_expiration),
+      .it_value = ToTimeSpec(firstExpiration),
     };
 
     return result;

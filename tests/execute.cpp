@@ -66,11 +66,11 @@ static ut::suite execute = [] {
 
     auto handle = sex::Execute([in = std::move(pipe.in)] {
       int pid = getpid();
-      SEX_ASSERT(write(in.GetInt(), &pid, sizeof(int)) == sizeof(int));
+      SEX_ASSERT(write(in.getInt(), &pid, sizeof(int)) == sizeof(int));
     }, {});
 
     int real_child_pid;
-    SEX_ASSERT(read(pipe.out.GetInt(), &real_child_pid, sizeof(int)) == sizeof(int));
+    SEX_ASSERT(read(pipe.out.getInt(), &real_child_pid, sizeof(int)) == sizeof(int));
 
     expect(eq(real_child_pid, handle.getPid()));
 

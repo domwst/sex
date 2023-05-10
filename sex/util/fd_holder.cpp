@@ -16,7 +16,7 @@ void FdHolder::Swap(FdHolder& other) noexcept {
   std::swap(fd_, other.fd_);
 }
 
-int FdHolder::GetInt() const noexcept {
+int FdHolder::getInt() const noexcept {
   return fd_.GetInt();
 }
 

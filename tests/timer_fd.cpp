@@ -24,7 +24,7 @@ void ExpectExpireIn(sex::TimerFd& timer, Duration expected,
   using namespace sex;
 
   auto start = std::chrono::high_resolution_clock::now();
-  expect(eq(timer.Wait(), size_t(1)));
+  expect(eq(timer.wait(), size_t(1)));
   auto end = std::chrono::high_resolution_clock::now();
 
   auto elapsed = end - start;
@@ -32,14 +32,14 @@ void ExpectExpireIn(sex::TimerFd& timer, Duration expected,
   expect(that % deviation <= precision);
 }
 
-static ut::suite timer_fd = [] {
+static ut::suite timerFd = [] {
   using namespace ut;
   using namespace sex;
   using namespace std::chrono_literals;
 
   "simple_1"_test = [] {
     TimerFd timer;
-    timer.Set(200ms);
+    timer.set(200ms);
     ExpectExpireIn(timer, 200ms);
   };
 
@@ -48,12 +48,12 @@ static ut::suite timer_fd = [] {
     constexpr Duration interval = 50ms;
 
     TimerFd timer;
-    timer.Set(first_expiration, interval);
+    timer.set(first_expiration, interval);
     ExpectExpireIn(timer, first_expiration);
     for (int i = 0; i < 3; ++i) {
       ExpectExpireIn(timer, interval);
     }
-    auto spec = timer.Cancel();
+    auto spec = timer.cancel();
 
     expect(that % spec.interval == interval);
     expect(that % spec.first_expiration <= interval);
@@ -64,10 +64,10 @@ static ut::suite timer_fd = [] {
     constexpr Duration delay = 100ms;
 
     TimerFd timer(TimerFd::NONBLOCKING);
-    timer.Set(delay);
-    expect(that % timer.Wait() == size_t(0));
+    timer.set(delay);
+    expect(that % timer.wait() == size_t(0));
     std::this_thread::sleep_for(delay + 10ms);
-    expect(that % timer.Wait() == size_t(1));
+    expect(that % timer.wait() == size_t(1));
   };
 
   "blocking_indefinitely"_test = [] {
@@ -75,8 +75,8 @@ static ut::suite timer_fd = [] {
 
     auto handle = Execute([out = std::move(pipe.in)] {
       TimerFd timer;
-      timer.Wait();
-      SEX_ASSERT(write(out.GetInt(), "a", 1) == 1);
+      timer.wait();
+      SEX_ASSERT(write(out.getInt(), "a", 1) == 1);
     }, {});
 
     std::this_thread::sleep_for(100ms);
@@ -85,7 +85,7 @@ static ut::suite timer_fd = [] {
     expect(status.isSignaled() && that % status.signal() == SIGKILL);
 
     char c;
-    expect(that % SEX_SYSCALL(read(pipe.out.GetInt(), &c, sizeof(c))).unwrap() == 0);
+    expect(that % SEX_SYSCALL(read(pipe.out.getInt(), &c, sizeof(c))).unwrap() == 0);
   };
 
   "not_burning_cpu"_test = [] {
@@ -93,9 +93,9 @@ static ut::suite timer_fd = [] {
     test::CpuTimeGuard guard(10ms);
 
     TimerFd t;
-    t.Set(1ms, 20ms);
+    t.set(1ms, 20ms);
     for (int i = 0; i < 20; ++i) {
-      expect(that % t.Wait() == (size_t)1);
+      expect(that % t.wait() == (size_t)1);
       auto now = stopwatch.TimePassed();
       expect(that % now >= 20ms * i && that % now <= 20ms * i + 21ms);
     }
