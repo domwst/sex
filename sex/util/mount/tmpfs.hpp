@@ -48,7 +48,7 @@ struct TmpFsMount final : IMount {
 
   ~TmpFsMount() override {
     if (!detached_ && mounted_) {
-      unmount();
+      unmount().ensure();
     }
   }
 
