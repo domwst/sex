@@ -9,6 +9,9 @@ struct IMount {
 
   virtual Result<> unmount() = 0;
 
+  // Detaches mount from the object, i.e. when the object is destroyed, the mount continues to exist
+  virtual void detach() && = 0;
+
   virtual ~IMount() = default;
 };
 

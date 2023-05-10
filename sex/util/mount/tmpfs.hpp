@@ -16,7 +16,7 @@ struct TmpFsMount final : IMount {
   }
 
   Result<> mount() override {
-    SEX_ASSERT(!mounted_);
+    SEX_ASSERT(!detached_ && !mounted_);
     std::error_code errorCode;
     fs::create_directories(destination_, errorCode);
     if (errorCode) {
@@ -32,7 +32,7 @@ struct TmpFsMount final : IMount {
   }
 
   Result<> unmount() override {
-    SEX_ASSERT(mounted_);
+    SEX_ASSERT(!detached_ && mounted_);
     auto result = SEX_SYSCALL(umount(destination_.c_str()));
     if (result.isError()) {
       return Result<>::ErrorFrom(result);
@@ -41,8 +41,13 @@ struct TmpFsMount final : IMount {
     return Result<>::Ok();
   }
 
+  void detach() && override {
+    SEX_ASSERT(!detached_);
+    detached_ = true;
+  }
+
   ~TmpFsMount() override {
-    if (mounted_) {
+    if (!detached_ && mounted_) {
       unmount();
     }
   }
@@ -51,6 +56,7 @@ private:
   fs::path destination_;
   uint64_t sizeBytes_;
   bool mounted_{false};
+  bool detached_{false};
 };
 
 }  // namespace sex::util

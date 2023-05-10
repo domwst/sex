@@ -80,7 +80,7 @@ public:
   }
 
   Result<> mount() override {
-    SEX_ASSERT(!mounted_);
+    SEX_ASSERT(!mounted_ && !detached_);
     if (auto checkResult = BindFunctions::CheckAndSetupDestination(source_, destination_); checkResult.isError()) {
       return Result<>::ErrorFrom(checkResult);
     }
@@ -99,7 +99,7 @@ public:
   }
 
   Result<> unmount() override {
-    SEX_ASSERT(mounted_);
+    SEX_ASSERT(mounted_ && !detached_);
 
     auto result = SEX_SYSCALL(umount(destination_.c_str()));
     if (result.isError()) {
@@ -110,12 +110,24 @@ public:
     return Result<>::Ok();
   }
 
+  void detach() && override {
+    SEX_ASSERT(!detached_);
+    detached_ = true;
+  }
+
+  ~BindImpl() override {
+    if (!detached_ && mounted_) {
+      unmount().ensure();
+    }
+  }
+
 private:
   const fs::path source_;
   const fs::path destination_;
   const int mountFlags_;
 
   bool mounted_ = false;
+  bool detached_ = false;
 
   static constexpr int defaultFlags = MS_BIND | MS_REC | MS_RDONLY;
 };
