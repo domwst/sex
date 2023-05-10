@@ -30,6 +30,10 @@ class EventPoller : protected FdHolder {
   struct Event {
     EventMask events;
     Cookie cookie;
+
+    operator std::span<Event>() & {
+      return {this, this + 1};
+    }
   };
 
   explicit EventPoller(Flags flags = NONE)
@@ -70,7 +74,7 @@ class EventPoller : protected FdHolder {
  private:
   void EpollCtl(FileDescriptor fd, Cookie cookie, EventMask events, int op) {
     auto event = CreateEpollEvent(cookie, events);
-    SEX_SYSCALL(epoll_ctl(getInt(), op, int(fd), &event)).unwrap();
+    SEX_SYSCALL(epoll_ctl(getInt(), op, int(fd), &event)).ensure();
   }
 
   static epoll_event CreateEpollEvent(Cookie cookie, EventMask flags) {
