@@ -77,7 +77,7 @@ void CgroupController::setMemoryLimitMax(uint64_t newVal) {
 }
 
 void CgroupController::setMemoryLimitHigh(uint64_t newVal) {
-  std::ofstream out(cgroupPath_ / memory_high);
+  std::ofstream out(cgroupPath_ / memoryHigh);
   if (newVal == Builder::NoLimit) {
     out << "max";
   } else {
@@ -87,7 +87,7 @@ void CgroupController::setMemoryLimitHigh(uint64_t newVal) {
 }
 
 void CgroupController::setPidsLimit(uint64_t newVal) {
-  std::ofstream out(cgroupPath_ / pids_max);
+  std::ofstream out(cgroupPath_ / pidsMax);
   if (newVal == Builder::NoLimit) {
     out << "max";
   } else {
@@ -98,18 +98,26 @@ void CgroupController::setPidsLimit(uint64_t newVal) {
 
 uint64_t CgroupController::getCurrentMemory() {
   uint64_t ret;
-  std::ifstream inf(cgroupPath_ / memory_current);
+  std::ifstream inf(cgroupPath_ / memoryCurrent);
   inf >> ret;
   SEX_ASSERT(inf.good());
   return ret;
 }
 
-void CgroupController::cgroupKill() {
-  SEX_ASSERT((std::ofstream(cgroupPath_ / cgroup_kill) << "1").good());
+void CgroupController::killAll() {
+  SEX_ASSERT((std::ofstream(cgroupPath_ / cgroupKill) << "1").good());
 }
 
 util::FdHolder CgroupController::getCgroupFd() const {
   return util::FdHolder(SEX_SYSCALL(open(getCgroupPath().c_str(), O_PATH | O_RDONLY | O_CLOEXEC)).unwrap());
+}
+
+void CgroupController::addProcess(int pid) {
+  SEX_ASSERT((std::ofstream(cgroupPath_ / cgroupProcs) << pid).good());
+}
+
+void CgroupController::enter() {
+  addProcess(getpid());
 }
 
 CgroupController::~CgroupController() {

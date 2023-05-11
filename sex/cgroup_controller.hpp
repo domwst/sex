@@ -39,9 +39,12 @@ class CgroupController {
   void setMemoryLimitMax(uint64_t newVal);
   void setPidsLimit(uint64_t newVal);
 
+  void addProcess(int pid);
+  void enter();
+
   uint64_t getCurrentMemory();
 
-  void cgroupKill();
+  void killAll();
 
   [[nodiscard]] util::FdHolder getCgroupFd() const;
 
@@ -58,10 +61,11 @@ class CgroupController {
   const fs::path cgroupPath_;
 
   static constexpr std::string_view memoryMax = "memory.max";
-  static constexpr std::string_view memory_high = "memory.high";
-  static constexpr std::string_view memory_current = "memory.current";
-  static constexpr std::string_view pids_max = "pids.max";
-  static constexpr std::string_view cgroup_kill = "cgroup.kill";
+  static constexpr std::string_view memoryHigh = "memory.high";
+  static constexpr std::string_view memoryCurrent = "memory.current";
+  static constexpr std::string_view pidsMax = "pids.max";
+  static constexpr std::string_view cgroupKill = "cgroup.cgroupKill";
+  static constexpr std::string_view cgroupProcs = "cgroup.procs";
 };
 
 }
