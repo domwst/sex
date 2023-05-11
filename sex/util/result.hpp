@@ -5,12 +5,26 @@
 #include <string>
 #include <memory>
 
-#include <sex/detail/exceptions/exception_concept.hpp>
-#include <sex/detail/exceptions/syscall_error.hpp>
-#include <sex/detail/macros.hpp>
+#include "sex/detail/exceptions/exception_concept.hpp"
+#include "sex/detail/exceptions/syscall_error.hpp"
+#include "sex/detail/macros.hpp"
+
+namespace sex::util {
 
 // TODO: Replace monostate with Unit
 template<class TResult = std::monostate>
+class [[nodiscard]] Result;
+
+template<class T>
+constexpr bool IsResult = false;
+
+template<class T>
+constexpr bool IsResult<Result<T>> = true;
+
+template<class T>
+concept CResult = IsResult<std::remove_cvref<T>>;
+
+template<class TResult>
 class [[nodiscard]] Result {
 public:
   Result() = delete;
@@ -38,6 +52,21 @@ public:
     }
   }
 
+  template<class F, class U = decltype(std::declval<F &&>()(std::declval<TResult>()))>
+  auto then(F &&f) const {  // >>=/fmap
+    if constexpr (CResult<U>) {
+      if (isError()) {
+        return U::ErrorFrom(*this);
+      }
+      return std::forward<F>(f)(unwrap());
+    } else {
+      if (isError()) {
+        return Result<U>::ErrorFrom(*this);
+      }
+      return Result<U>::Ok(std::forward<F>(f)(unwrap()));
+    }
+  }
+
   static Result Ok(TResult result) {
     return Result(std::move(result));
   }
@@ -48,7 +77,7 @@ public:
   }
 
   template<CException Error>
-  static Result Error(Error&& err) {
+  static Result Error(Error &&err) {
     return Result(std::make_exception_ptr(std::forward<Error>(err)));
   }
 
@@ -57,7 +86,7 @@ public:
   }
 
   template<class U>
-  static Result ErrorFrom(const Result<U>& r) {
+  static Result ErrorFrom(const Result<U> &r) {
     SEX_ASSERT(r.isError());
     return Result(r.getError());
   }
@@ -71,3 +100,5 @@ private:
 
   std::variant<TResult, std::exception_ptr> result_;
 };
+
+}  // namespace sex::util

@@ -5,7 +5,7 @@
 
 struct clone_args;
 
-namespace sex {
+namespace sex::util {
 
 class IExecuteHooks {
  public:
@@ -34,4 +34,4 @@ class ExecuteHooksDefault : public IExecuteHooks {
   uint64_t previous_gid_{-1u};
 };
 
-}
+}  // namespace sex::detail

@@ -2,8 +2,14 @@
 
 namespace sex {
 
+namespace detail {
+class ProcessKnob;
+}
+
+namespace util {
+
 class ExitStatus {
-  friend class ProcessKnob;
+  friend class sex::detail::ProcessKnob;
 
  public:
   [[nodiscard]] bool isExited() const;
@@ -20,4 +26,5 @@ class ExitStatus {
   int status_;
 };
 
+}  // util
 }  // sex

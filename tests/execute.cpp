@@ -7,15 +7,15 @@
 
 namespace ut = boost::ut;
 
-static bool ExitedWith(const sex::ExitStatus& status, int exit_code) {
+static bool ExitedWith(const sex::util::ExitStatus& status, int exit_code) {
   return status.isExited() && status.exitCode() == exit_code;
 }
 
-static bool ExitedWithZero(const sex::ExitStatus& status) {
+static bool ExitedWithZero(const sex::util::ExitStatus& status) {
   return ExitedWith(status, 0);
 }
 
-static bool KilledWith(const sex::ExitStatus& status, int signal) {
+static bool KilledWith(const sex::util::ExitStatus& status, int signal) {
   return status.isSignaled() && status.signal() == signal;
 }
 
@@ -55,7 +55,7 @@ static ut::suite execute = [] {
   "new_pid_ns"_test = [] {
     auto handle = sex::Execute([] {
       expect(eq(getpid(), 1));
-    }, sex::ExecuteArgs{}.NewPidNS().NewUserNS());
+    }, sex::util::ExecuteArgs{}.NewPidNS().NewUserNS());
 
     auto status = std::move(handle).wait();
     expect(ExitedWithZero(status));

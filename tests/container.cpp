@@ -3,6 +3,7 @@
 
 #include <boost/ut.hpp>
 #include <vector>
+#include <fstream>
 
 using namespace sex;
 using namespace boost::ut;
@@ -34,7 +35,7 @@ static suite container = [] {
       container.enter();
       assert(fs::current_path() == fs::path("/"));
       assert(listDirectory("/") == std::vector{fs::path("/test.txt")});
-    }, sex::ExecuteArgs{}.NewUserNS()).wait();
+    }, sex::util::ExecuteArgs{}.NewUserNS()).wait();
 
     expect(that % status.isExited() && that % status.exitCode() == 0);
 

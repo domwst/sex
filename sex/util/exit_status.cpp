@@ -2,9 +2,9 @@
 
 #include <sys/wait.h>
 
-#include <sex/detail/syscall.hpp>
+#include "sex/detail/syscall.hpp"
 
-namespace sex {
+namespace sex::util {
 
 ExitStatus::ExitStatus(int status) : status_(status) {
 }
@@ -27,4 +27,4 @@ int ExitStatus::signal() const {
   return WTERMSIG(status_);
 }
 
-}
+}  // namespace sex::detail

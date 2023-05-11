@@ -1,9 +1,17 @@
-#include <iostream>
 #include "execute.hpp"
+
+#include <iostream>
+#include <linux/sched.h>
+#include <syscall.h>
+#include <sys/prctl.h>
+#include <csignal>
+#include <cstdint>
+#include <sched.h>
+#include <fstream>
 
 namespace sex {
 
-ProcessKnob Execute(detail::Routine f, ExecuteArgs args, IExecuteHooks& hooks) {
+detail::ProcessKnob Execute(detail::Routine f, util::ExecuteArgs args, util::IExecuteHooks& hooks) {
   auto cl_args = *args.GetCloneArgs();
 
   int pidfd = -1;
@@ -37,7 +45,7 @@ ProcessKnob Execute(detail::Routine f, ExecuteArgs args, IExecuteHooks& hooks) {
   return {child_pid, std::move(pfd)};
 }
 
-ProcessKnob Execute(detail::Routine f, ExecuteArgs args, IExecuteHooks&& hooks) {
+detail::ProcessKnob Execute(detail::Routine f, util::ExecuteArgs args, util::IExecuteHooks&& hooks) {
   return Execute(std::move(f), args, hooks);
 }
 

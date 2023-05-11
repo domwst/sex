@@ -1,11 +1,11 @@
 #include "process_knob.hpp"
 
-#include <sex/detail/syscall.hpp>
+#include "sex/detail/syscall.hpp"
 
 #include <sys/wait.h>
 #include <utility>
 
-namespace sex {
+namespace sex::detail {
 
 ProcessKnob::ProcessKnob(int pid, util::FdHolder pid_fd)
   : pid_(pid), pid_fd_(std::move(pid_fd)) {
@@ -18,14 +18,18 @@ util::FileDescriptor ProcessKnob::getPidFd() const {
   return util::FileDescriptor(pid_fd_);
 }
 
-ExitStatus ProcessKnob::wait() && {  // NOLINT
+util::ExitStatus ProcessKnob::wait() && {  // NOLINT
   int status;
   SEX_ASSERT(waitpid(pid_, &status, __WALL) == pid_);
-  return ExitStatus(status);
+  return util::ExitStatus(status);
 }
 
 int ProcessKnob::getPid() const {
   return pid_;
 }
 
-}  // sex
+util::Result<> ProcessKnob::sendSignal(int signum) {
+  return SEX_SYSCALL(kill(getPid(), signum)).then([](auto) { return std::monostate{}; });
+}
+
+}  // sex::detail

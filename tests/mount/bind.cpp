@@ -32,7 +32,7 @@ static suite bindMount = [] {
       SEX_ASSERT(ReadFile(newTextPath) == "Test text here");
       int fd = open(newTextPath.c_str(), O_WRONLY);
       SEX_ASSERT(fd == -1 && errno == EROFS);
-    }, sex::ExecuteArgs{}.NewUserNS().NewMountNS()).wait();
+    }, sex::util::ExecuteArgs{}.NewUserNS().NewMountNS()).wait();
     expect(status.isExited() && status.exitCode() == 0);
   };
 
@@ -49,7 +49,7 @@ static suite bindMount = [] {
       mnt.mount().ensure();
 
       SEX_ASSERT((std::ofstream(otherDir / "test.txt") << "Kek").good());
-    },sex::ExecuteArgs{}.NewUserNS().NewMountNS()).wait();
+    },sex::util::ExecuteArgs{}.NewUserNS().NewMountNS()).wait();
     expect(status.isExited() && status.exitCode() == 0);
     expect(that % ReadFile(textFile) == std::string("Kek"));
   };
@@ -69,7 +69,7 @@ static suite bindMount = [] {
 
       int fd = open(otherFile.c_str(), O_WRONLY);
       SEX_ASSERT(fd == -1 && errno == EROFS);
-    }, sex::ExecuteArgs{}.NewMountNS().NewUserNS()).wait();
+    }, sex::util::ExecuteArgs{}.NewMountNS().NewUserNS()).wait();
 
     expect(status.isExited() && status.exitCode() == 0);
   };
@@ -86,7 +86,7 @@ static suite bindMount = [] {
       mnt.mount().ensure();
 
       SEX_ASSERT((std::ofstream(otherFile) << "lol").good());
-    }, sex::ExecuteArgs{}.NewMountNS().NewUserNS()).wait();
+    }, sex::util::ExecuteArgs{}.NewMountNS().NewUserNS()).wait();
 
     expect(status.isExited() && status.exitCode() == 0);
     expect(that % ReadFile(textFile) == std::string("lol"));

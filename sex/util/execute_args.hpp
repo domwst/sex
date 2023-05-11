@@ -1,11 +1,11 @@
 #pragma once
 
-#include <sex/util/file_descriptor.hpp>
+#include "file_descriptor.hpp"
 
 #include <linux/sched.h>
 #include <cstdint>
 
-namespace sex {
+namespace sex::util {
 
 #pragma push_macro("DECLARE_EXECUTE_FLAG")
 
@@ -57,4 +57,4 @@ class ExecuteArgs {
 #undef DECLARE_EXECUTE_FLAG
 #pragma pop_macro("DECLARE_EXECUTE_FLAG")
 
-}  // sex
+}  // sex::util

@@ -1,26 +1,42 @@
 #pragma once
 
-#include <sex/detail/exit_status.hpp>
-#include <sex/util/fd_holder.hpp>
-#include <sex/detail/routine.hpp>
+#include "sex/util/exit_status.hpp"
+#include "sex/util/fd_holder.hpp"
+#include "routine.hpp"
+#include <sex/util/result.hpp>
 
 namespace sex {
 
-class ExecuteArgs;
+namespace util {
 
+class ExecuteArgs;
 class IExecuteHooks;
 
+}  // namespace util
+
+namespace detail {
+
+class ProcessKnob;
+
+}  // namespace detail
+
+detail::ProcessKnob Execute(detail::Routine f, util::ExecuteArgs args, util::IExecuteHooks& hooks);
+
+namespace detail {
+
 class ProcessKnob {
- public:
+public:
   [[nodiscard]] util::FileDescriptor getPidFd() const;
 
-  ExitStatus wait()&&;
+  util::ExitStatus wait() &&;
 
   [[nodiscard]] int getPid() const;
 
-  friend ProcessKnob Execute(detail::Routine f, ExecuteArgs args, IExecuteHooks& hooks);
+  util::Result<> sendSignal(int signum);
 
- private:
+  friend ProcessKnob sex::Execute(detail::Routine f, util::ExecuteArgs args, util::IExecuteHooks& hooks);
+
+private:
   ProcessKnob(int pid, util::FdHolder pid_fd);
 
   explicit ProcessKnob(int pid);
@@ -29,4 +45,5 @@ class ProcessKnob {
   util::FdHolder pid_fd_;
 };
 
+}  // detail
 }  // sex

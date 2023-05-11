@@ -1,12 +1,12 @@
 #include "execute_hooks.hpp"
 
-#include <sex/detail/syscall.hpp>
+#include "sex/detail/syscall.hpp"
 
 #include <linux/sched.h>
 #include <sys/prctl.h>
 #include <fstream>
 
-namespace sex {
+namespace sex::util {
 
 void ExecuteHooksDefault::BeforeClone(clone_args& args) {
   auto flags = args.flags;

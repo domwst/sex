@@ -1,6 +1,6 @@
 #pragma once
 
-#include "sex/detail/syscall_result.hpp"
+#include "sex/util/result.hpp"
 
 namespace sex::util {
 

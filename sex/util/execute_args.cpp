@@ -12,7 +12,7 @@ ExecuteArgs& ExecuteArgs::Same##KnobName() {    \
   return UnsetFlag(Flag);                       \
 }
 
-namespace sex {
+namespace sex::util {
 
 ExecuteArgs::ExecuteArgs() : args({
     .flags = 0,
