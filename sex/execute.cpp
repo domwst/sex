@@ -39,7 +39,7 @@ detail::ProcessKnob Execute(detail::Routine f, util::ExecuteArgs args, util::IEx
   util::FdHolder pfd;
 
   if (cl_args.flags & CLONE_PIDFD) {
-    pfd.Reset(util::FileDescriptor(pidfd));
+    pfd.reset(util::FileDescriptor(pidfd));
   }
 
   return {child_pid, std::move(pfd)};

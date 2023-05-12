@@ -21,16 +21,16 @@ class FdHolder {
 
   FdHolder& operator=(FdHolder&& other) noexcept;
 
-  void Swap(FdHolder& other) noexcept;
+  void swap(FdHolder& other) noexcept;
 
   [[nodiscard]] int getInt() const noexcept;
 
   // NOLINTNEXTLINE
   [[nodiscard]] operator FileDescriptor() const& noexcept;
 
-  void Reset(FileDescriptor new_fd = {});
+  void reset(FileDescriptor new_fd = {});
 
-  FileDescriptor Release() noexcept;
+  FileDescriptor release() noexcept;
 
   ~FdHolder();
 };
