@@ -34,6 +34,10 @@ class ExecuteArgs {
 
   DECLARE_EXECUTE_FLAG(TimeNS)
 
+  ExecuteArgs& SameFiles();
+
+  ExecuteArgs& NewFiles();
+
   ExecuteArgs& IntoCgroup(util::FileDescriptor cfd);
 
   ExecuteArgs& DiscardIntoCgroup();

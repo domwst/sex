@@ -44,6 +44,16 @@ DEFINE_EXECUTE_FLAG(UTSNS, CLONE_NEWUTS)
 
 DEFINE_EXECUTE_FLAG(TimeNS, CLONE_NEWTIME)
 
+ExecuteArgs& ExecuteArgs::SameFiles() {
+  SetFlag(CLONE_FILES);
+  return *this;
+}
+
+ExecuteArgs& ExecuteArgs::NewFiles() {
+  UnsetFlag(CLONE_FILES);
+  return *this;
+}
+
 ExecuteArgs& ExecuteArgs::IntoCgroup(util::FileDescriptor cfd) {
   args.cgroup = cfd.getInt();
   return SetFlag(CLONE_INTO_CGROUP);
