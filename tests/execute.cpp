@@ -7,18 +7,6 @@
 
 namespace ut = boost::ut;
 
-static bool ExitedWith(const sex::util::ExitStatus& status, int exit_code) {
-  return status.isExited() && status.exitCode() == exit_code;
-}
-
-static bool ExitedWithZero(const sex::util::ExitStatus& status) {
-  return ExitedWith(status, 0);
-}
-
-static bool KilledWith(const sex::util::ExitStatus& status, int signal) {
-  return status.isSignaled() && status.signal() == signal;
-}
-
 static ut::suite execute = [] {
   using namespace ut::literals;
   using namespace ut;
@@ -31,7 +19,7 @@ static ut::suite execute = [] {
     }, {});
 
     auto status = std::move(handle).wait();
-    expect(ExitedWithZero(status));
+    expect(status == sex::util::ExitStatus::Exited(0));
   };
 
   "proper_exit_code"_test = [] {
@@ -40,7 +28,7 @@ static ut::suite execute = [] {
     }, {});
 
     auto status = std::move(handle).wait();
-    expect(ExitedWith(status, 12));
+    expect(status == sex::util::ExitStatus::Exited(12));
   };
 
   "signal_suicide"_test = [] {
@@ -49,7 +37,7 @@ static ut::suite execute = [] {
     }, {});
 
     auto status = std::move(handle).wait();
-    expect(KilledWith(status, SIGTERM));
+    expect(status == sex::util::ExitStatus::Signaled(SIGTERM));
   };
 
   "new_pid_ns"_test = [] {
@@ -58,7 +46,7 @@ static ut::suite execute = [] {
     }, sex::util::ExecuteArgs{}.NewPidNS().NewUserNS());
 
     auto status = std::move(handle).wait();
-    expect(ExitedWithZero(status));
+    expect(status == sex::util::ExitStatus::Exited(0));
   };
 
   "correct_pid_in_knob"_test = [] {
@@ -75,5 +63,16 @@ static ut::suite execute = [] {
     expect(eq(real_child_pid, handle.getPid()));
 
     std::move(handle).wait();
+  };
+
+  "cant_kill_init"_test = [] {
+    auto status = sex::Execute([] {
+      SEX_ASSERT(getpid() == 1);
+      auto status = sex::Execute([] {
+        SEX_ASSERT(kill(1, SIGKILL) == 0);
+      }).wait();
+      SEX_ASSERT(status == sex::util::ExitStatus::Exited(0));
+    }, sex::util::ExecuteArgs{}.NewPidNS().NewUserNS()).wait();
+    SEX_ASSERT(status == sex::util::ExitStatus::Exited(0));
   };
 };

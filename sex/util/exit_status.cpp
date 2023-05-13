@@ -1,34 +1,40 @@
 #include "exit_status.hpp"
 
-#include <sys/wait.h>
-
 #include "sex/detail/syscall.hpp"
 
 namespace sex::util {
 
-ExitStatus::ExitStatus(int status) : status_(status) {
-}
-
 bool ExitStatus::isExited() const {
-  return WIFEXITED(status_);
+  return getType() == Type::Exited;
 }
 
 bool ExitStatus::isSignaled() const {
-  return WIFSIGNALED(status_);
+  return getType() == Type::Signaled;
 }
 
-int ExitStatus::exitCode() const {
+int ExitStatus::getExitCode() const {
   SEX_ASSERT(isExited());
-  return WEXITSTATUS(status_);
+  return value_;
 }
 
-int ExitStatus::signal() const {
+int ExitStatus::getSignal() const {
   SEX_ASSERT(isSignaled());
-  return WTERMSIG(status_);
+  return value_;
 }
 
-bool ExitStatus::isOk() const {
-  return (isExited() && exitCode() == 0) || (isSignaled() && signal() == SIGQUIT);
+ExitStatus::Type ExitStatus::getType() const {
+  return type_;
+}
+
+ExitStatus::ExitStatus(sex::util::ExitStatus::Type type, int value) : type_(type), value_(value) {
+}
+
+ExitStatus ExitStatus::Exited(int exitCode) {
+  return {Type::Exited, exitCode};
+}
+
+ExitStatus ExitStatus::Signaled(int signal) {
+  return {Type::Signaled, signal};
 }
 
 }  // namespace sex::detail

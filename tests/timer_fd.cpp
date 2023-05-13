@@ -9,7 +9,6 @@
 #include <boost/ut.hpp>
 
 #include <thread>
-#include <fcntl.h>
 
 namespace ut = boost::ut;
 
@@ -83,7 +82,7 @@ static ut::suite timerFd = [] {
     std::this_thread::sleep_for(100ms);
     kill(handle.getPid(), SIGKILL);
     auto status = std::move(handle).wait();
-    expect(status.isSignaled() && that % status.signal() == SIGKILL);
+    expect(status == sex::util::ExitStatus::Signaled(SIGKILL));
 
     char c;
     expect(that % SEX_SYSCALL(read(pipe.out.getInt(), &c, sizeof(c))).unwrap() == 0);

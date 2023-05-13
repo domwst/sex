@@ -21,7 +21,13 @@ util::FileDescriptor ProcessKnob::getPidFd() const {
 util::ExitStatus ProcessKnob::wait() && {  // NOLINT
   int status;
   SEX_ASSERT(waitpid(pid_, &status, __WALL) == pid_);
-  return util::ExitStatus(status);
+  if (WIFEXITED(status)) {
+    return util::ExitStatus::Exited(WEXITSTATUS(status));
+  }
+  if (WIFSIGNALED(status)) {
+    return util::ExitStatus::Signaled(WTERMSIG(status));
+  }
+  util::Panic(fmt::format("Wait status {} is not supported", status));
 }
 
 int ProcessKnob::getPid() const {

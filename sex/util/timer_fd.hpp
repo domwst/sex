@@ -31,7 +31,7 @@ class TimerFd : protected FdHolder {
 
   using FdHolder::operator FileDescriptor;
 
-  uint64_t wait() const {
+  uint64_t wait() {
     uint64_t cnt = 0;
     auto ret = read(getInt(), &cnt, sizeof(cnt));
     SEX_ASSERT(ret == sizeof(cnt) || (ret == -1 && errno == EAGAIN));

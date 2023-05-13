@@ -37,7 +37,7 @@ static suite container = [] {
       assert(listDirectory("/") == std::vector{fs::path("/test.txt")});
     }, sex::util::ExecuteArgs{}.NewUserNS()).wait();
 
-    expect(that % status.isExited() && that % status.exitCode() == 0);
+    expect(status == sex::util::ExitStatus::Exited(0));
 
     expect(fs::is_directory(path));
     container.remove();
