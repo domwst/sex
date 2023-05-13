@@ -27,4 +27,8 @@ int ExitStatus::signal() const {
   return WTERMSIG(status_);
 }
 
+bool ExitStatus::isOk() const {
+  return (isExited() && exitCode() == 0) || (isSignaled() && signal() == SIGQUIT);
+}
+
 }  // namespace sex::detail

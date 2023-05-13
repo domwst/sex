@@ -20,6 +20,8 @@ class ExitStatus {
 
   [[nodiscard]] int signal() const;
 
+  [[nodiscard]] bool isOk() const;
+
  private:
   explicit ExitStatus(int status);
 
