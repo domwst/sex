@@ -25,6 +25,27 @@ class CgroupController {
     AddBuilderFieldDefault(uint64_t, MemoryLimitHigh, NoLimit)
     AddBuilderFieldDefault(uint64_t, MemoryLimitMax, NoLimit)
     AddBuilderFieldDefault(uint64_t, PidsLimit, NoLimit)
+
+  public:
+    struct CpuWindowLimit {
+      uint64_t limitUS = NoLimit;
+      uint64_t windowUS = NoLimit;
+    };
+
+    Builder& setCpuWindowLimit(std::chrono::microseconds limit, std::chrono::microseconds window) {
+      cpuWindowLimit = {
+        .limitUS = static_cast<uint64_t>(limit.count()),
+        .windowUS = static_cast<uint64_t>(window.count()),
+      };
+      return *this;
+    }
+
+    [[nodiscard]] CpuWindowLimit getCpuWindowLimit() const {
+      return cpuWindowLimit;
+    }
+
+  private:
+    CpuWindowLimit cpuWindowLimit;
   };
 
   struct CpuUsage {
@@ -44,7 +65,7 @@ class CgroupController {
   void setMemoryLimitHigh(uint64_t newVal);
   void setMemoryLimitMax(uint64_t newVal);
   void setPidsLimit(uint64_t newVal);
-  void setCpuPeriodLimit(std::chrono::microseconds limit, std::chrono::microseconds period);
+  void setCpuWindowLimit(std::chrono::microseconds limit, std::chrono::microseconds window);
 
   void addProcess(int pid);
   void enter();

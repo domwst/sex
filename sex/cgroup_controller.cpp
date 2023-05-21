@@ -82,6 +82,13 @@ CgroupController::CgroupController(std::string_view cgroupName,
                                                    Builder::NoLimit) {
     setPidsLimit(pidsLimit);
   }
+
+  if (auto cpuWindowLimit = options.getCpuWindowLimit(); cpuWindowLimit.limitUS != Builder::NoLimit) {
+    setCpuWindowLimit(
+      std::chrono::microseconds(cpuWindowLimit.limitUS),
+      std::chrono::microseconds(cpuWindowLimit.windowUS)
+    );
+  }
 }
 
 void CgroupController::setMemoryLimitMax(uint64_t newVal) {
@@ -166,8 +173,8 @@ const fs::path& CgroupController::getCgroupPath() const {
   return cgroupPath_;
 }
 
-void CgroupController::setCpuPeriodLimit(std::chrono::microseconds limit, std::chrono::microseconds period) {
-  SEX_ASSERT((std::ofstream(cgroupPath_ / cpuMax) << limit.count() << " " << period.count()).good());
+void CgroupController::setCpuWindowLimit(std::chrono::microseconds limit, std::chrono::microseconds window) {
+  SEX_ASSERT((std::ofstream(cgroupPath_ / cpuMax) << limit.count() << " " << window.count()).good());
 }
 
 }  // sex
