@@ -27,6 +27,12 @@ class CgroupController {
     AddBuilderFieldDefault(uint64_t, PidsLimit, NoLimit)
   };
 
+  struct CpuUsage {
+    std::chrono::microseconds system;
+    std::chrono::microseconds user;
+    std::chrono::microseconds total;
+  };
+
   CgroupController() = delete;
 
   CgroupController(const CgroupController&) = delete;
@@ -38,11 +44,13 @@ class CgroupController {
   void setMemoryLimitHigh(uint64_t newVal);
   void setMemoryLimitMax(uint64_t newVal);
   void setPidsLimit(uint64_t newVal);
+  void setCpuPeriodLimit(std::chrono::microseconds limit, std::chrono::microseconds period);
 
   void addProcess(int pid);
   void enter();
 
-  uint64_t getCurrentMemory();
+  [[nodiscard]] uint64_t getCurrentMemory() const;
+  [[nodiscard]] CpuUsage getCpuUsage() const;
 
   void killAll();
 
@@ -64,8 +72,10 @@ class CgroupController {
   static constexpr std::string_view memoryHigh = "memory.high";
   static constexpr std::string_view memoryCurrent = "memory.current";
   static constexpr std::string_view pidsMax = "pids.max";
-  static constexpr std::string_view cgroupKill = "cgroup.cgroupKill";
+  static constexpr std::string_view cgroupKill = "cgroup.kill";
   static constexpr std::string_view cgroupProcs = "cgroup.procs";
+  static constexpr std::string_view cpuMax = "cpu.max";
+  static constexpr std::string_view cpuStats = "cpu.stats";
 };
 
 }

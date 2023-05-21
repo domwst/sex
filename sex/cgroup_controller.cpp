@@ -8,6 +8,24 @@
 #include <fcntl.h>
 #include <fstream>
 #include <iostream>
+#include <map>
+
+namespace {
+
+std::map<std::string, uint64_t> ReadFlatKeyedFile(std::istream &in) {
+  std::string key, v;
+  std::map<std::string, uint64_t> result;
+  while (in >> key >> v) {
+    uint64_t value = -1;
+    if (v != "max") {
+      value = std::stoull(v);
+    }
+    result[key] = value;
+  }
+  return result;
+}
+
+}
 
 namespace sex {
 
@@ -96,12 +114,32 @@ void CgroupController::setPidsLimit(uint64_t newVal) {
   SEX_ASSERT(out.good());
 }
 
-uint64_t CgroupController::getCurrentMemory() {
+uint64_t CgroupController::getCurrentMemory() const {
   uint64_t ret;
   std::ifstream inf(cgroupPath_ / memoryCurrent);
   inf >> ret;
   SEX_ASSERT(inf.good());
   return ret;
+}
+
+CgroupController::CpuUsage CgroupController::getCpuUsage() const {
+  static const std::string systemUsage = "system_usec";
+  static const std::string userUsage = "user_usec";
+  static const std::string totalUsage = "usage_usec";
+
+  std::ifstream inf(cgroupPath_ / cpuStats);
+  const auto entries = ReadFlatKeyedFile(inf);
+  SEX_ASSERT(
+    entries.contains(systemUsage) &&
+    entries.contains(userUsage) &&
+    entries.contains(totalUsage)
+  );
+
+  return {
+    .system = std::chrono::microseconds(entries.at(systemUsage)),
+    .user = std::chrono::microseconds(entries.at(userUsage)),
+    .total = std::chrono::microseconds(entries.at(totalUsage)),
+  };
 }
 
 void CgroupController::killAll() {
@@ -126,6 +164,10 @@ CgroupController::~CgroupController() {
 
 const fs::path& CgroupController::getCgroupPath() const {
   return cgroupPath_;
+}
+
+void CgroupController::setCpuPeriodLimit(std::chrono::microseconds limit, std::chrono::microseconds period) {
+  SEX_ASSERT((std::ofstream(cgroupPath_ / cpuMax) << limit.count() << " " << period.count()).good());
 }
 
 }  // sex
