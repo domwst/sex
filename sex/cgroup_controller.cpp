@@ -51,7 +51,7 @@ sex::util::Once InitializeParentCgroup = [] {
     return;
   }
 
-  constexpr std::string_view EssentialControllers = "+memory +pids";
+  constexpr std::string_view EssentialControllers = "+memory +pids +cpu";
   SEX_ASSERT((std::ofstream(
     CgroupController::CgroupsPath / CgroupController::SubtreeControl)
     << EssentialControllers).good());
