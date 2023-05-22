@@ -89,6 +89,8 @@ class CgroupController {
  private:
   const fs::path cgroupPath_;
 
+  [[nodiscard]] fs::path getControllerPath(std::string_view controller) const;
+
   static constexpr std::string_view memoryMax = "memory.max";
   static constexpr std::string_view memoryHigh = "memory.high";
   static constexpr std::string_view memoryCurrent = "memory.current";
@@ -96,7 +98,7 @@ class CgroupController {
   static constexpr std::string_view cgroupKill = "cgroup.kill";
   static constexpr std::string_view cgroupProcs = "cgroup.procs";
   static constexpr std::string_view cpuMax = "cpu.max";
-  static constexpr std::string_view cpuStats = "cpu.stats";
+  static constexpr std::string_view cpuStats = "cpu.stat";
 };
 
 }

@@ -92,7 +92,7 @@ CgroupController::CgroupController(std::string_view cgroupName,
 }
 
 void CgroupController::setMemoryLimitMax(uint64_t newVal) {
-  std::ofstream out(cgroupPath_ / memoryMax);
+  std::ofstream out(getControllerPath(memoryMax));
   if (newVal == Builder::NoLimit) {
     out << "max";
   } else {
@@ -102,7 +102,7 @@ void CgroupController::setMemoryLimitMax(uint64_t newVal) {
 }
 
 void CgroupController::setMemoryLimitHigh(uint64_t newVal) {
-  std::ofstream out(cgroupPath_ / memoryHigh);
+  std::ofstream out(getControllerPath(memoryHigh));
   if (newVal == Builder::NoLimit) {
     out << "max";
   } else {
@@ -112,7 +112,7 @@ void CgroupController::setMemoryLimitHigh(uint64_t newVal) {
 }
 
 void CgroupController::setPidsLimit(uint64_t newVal) {
-  std::ofstream out(cgroupPath_ / pidsMax);
+  std::ofstream out(getControllerPath(pidsMax));
   if (newVal == Builder::NoLimit) {
     out << "max";
   } else {
@@ -123,7 +123,7 @@ void CgroupController::setPidsLimit(uint64_t newVal) {
 
 uint64_t CgroupController::getCurrentMemory() const {
   uint64_t ret;
-  std::ifstream inf(cgroupPath_ / memoryCurrent);
+  std::ifstream inf(getControllerPath(memoryCurrent));
   inf >> ret;
   SEX_ASSERT(inf.good());
   return ret;
@@ -134,7 +134,7 @@ CgroupController::CpuUsage CgroupController::getCpuUsage() const {
   static const std::string userUsage = "user_usec";
   static const std::string totalUsage = "usage_usec";
 
-  std::ifstream inf(cgroupPath_ / cpuStats);
+  std::ifstream inf(getControllerPath(cpuStats));
   const auto entries = ReadFlatKeyedFile(inf);
   SEX_ASSERT(
     entries.contains(systemUsage) &&
@@ -150,7 +150,7 @@ CgroupController::CpuUsage CgroupController::getCpuUsage() const {
 }
 
 void CgroupController::killAll() {
-  SEX_ASSERT((std::ofstream(cgroupPath_ / cgroupKill) << "1").good());
+  SEX_ASSERT((std::ofstream(getControllerPath(cgroupKill)) << "1").good());
 }
 
 util::FdHolder CgroupController::getCgroupFd() const {
@@ -158,7 +158,7 @@ util::FdHolder CgroupController::getCgroupFd() const {
 }
 
 void CgroupController::addProcess(int pid) {
-  SEX_ASSERT((std::ofstream(cgroupPath_ / cgroupProcs) << pid).good());
+  SEX_ASSERT((std::ofstream(getControllerPath(cgroupProcs)) << pid).good());
 }
 
 void CgroupController::enter() {
@@ -174,7 +174,11 @@ const fs::path& CgroupController::getCgroupPath() const {
 }
 
 void CgroupController::setCpuWindowLimit(std::chrono::microseconds limit, std::chrono::microseconds window) {
-  SEX_ASSERT((std::ofstream(cgroupPath_ / cpuMax) << limit.count() << " " << window.count()).good());
+  SEX_ASSERT((std::ofstream(getControllerPath(cpuMax)) << limit.count() << " " << window.count()).good());
+}
+
+fs::path CgroupController::getControllerPath(std::string_view controller) const {
+  return getCgroupPath() / controller;
 }
 
 }  // sex
