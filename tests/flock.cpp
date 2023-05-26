@@ -1,5 +1,5 @@
 #include <sex/util/flock.hpp>
-#include <sex/detail/syscall.hpp>
+#include "sex/util/syscall.hpp"
 
 #include <boost/ut.hpp>
 

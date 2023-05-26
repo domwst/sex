@@ -1,7 +1,7 @@
 #pragma once
 
 #include <fmt/format.h>
-#include <sex/util/panic.hpp>
+#include "panic.hpp"
 
 //#define SEX_LIKELY(expr) __builtin_expect((expr), 1)
 #define SEX_LIKELY(expr) (expr)

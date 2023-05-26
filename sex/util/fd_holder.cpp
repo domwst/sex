@@ -1,6 +1,6 @@
 #include "fd_holder.hpp"
 
-#include <sex/detail/syscall.hpp>
+#include "syscall.hpp"
 
 #include <unistd.h>
 

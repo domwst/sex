@@ -1,6 +1,6 @@
 #include "cgroup_controller.hpp"
 
-#include <sex/detail/syscall.hpp>
+#include "sex/util/syscall.hpp"
 
 #include <sex/util/once.hpp>
 #include <sex/util/flock.hpp>

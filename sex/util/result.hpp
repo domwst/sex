@@ -7,7 +7,7 @@
 
 #include "sex/detail/exceptions/exception_concept.hpp"
 #include "sex/detail/exceptions/syscall_error.hpp"
-#include "sex/detail/macros.hpp"
+#include "macros.hpp"
 
 namespace sex::util {
 

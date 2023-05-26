@@ -1,6 +1,6 @@
 #include "process_knob.hpp"
 
-#include "sex/detail/syscall.hpp"
+#include "sex/util/syscall.hpp"
 
 #include <sys/wait.h>
 #include <utility>

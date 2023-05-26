@@ -1,7 +1,7 @@
 #pragma once
 
 #include <sex/util/fd_holder.hpp>
-#include <sex/detail/syscall.hpp>
+#include "syscall.hpp"
 
 #include <span>
 #include <vector>

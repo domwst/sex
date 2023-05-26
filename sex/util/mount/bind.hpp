@@ -1,7 +1,7 @@
 #pragma once
 
 #include "mount.hpp"
-#include "sex/detail/syscall.hpp"
+#include "sex/util/syscall.hpp"
 
 #include <sys/mount.h>
 #include <filesystem>

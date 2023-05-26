@@ -1,6 +1,6 @@
 #include "exit_status.hpp"
 
-#include "sex/detail/syscall.hpp"
+#include "syscall.hpp"
 
 namespace sex::util {
 

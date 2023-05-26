@@ -1,8 +1,8 @@
 #pragma once
 
-#include <sex/detail/macros.hpp>
-#include <sex/util/panic.hpp>
-#include <sex/util/source_location.hpp>
+#include "macros.hpp"
+#include "panic.hpp"
+#include "source_location.hpp"
 
 #include <fmt/core.h>
 

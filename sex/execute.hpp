@@ -1,7 +1,7 @@
 #pragma once
 
 #include <sex/util/fd_holder.hpp>
-#include <sex/detail/syscall.hpp>
+#include "sex/util/syscall.hpp"
 #include "sex/util/execute_hooks.hpp"
 #include "sex/detail/process_knob.hpp"
 #include "sex/util/execute_args.hpp"

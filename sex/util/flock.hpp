@@ -6,7 +6,7 @@
 #include <sys/file.h>
 
 #include <sex/util/fd_holder.hpp>
-#include <sex/detail/syscall.hpp>
+#include "syscall.hpp"
 
 namespace sex::util {
 

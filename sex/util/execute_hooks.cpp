@@ -1,6 +1,6 @@
 #include "execute_hooks.hpp"
 
-#include "sex/detail/syscall.hpp"
+#include "syscall.hpp"
 
 #include <linux/sched.h>
 #include <sys/prctl.h>

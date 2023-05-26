@@ -1,6 +1,6 @@
 #pragma once
 
-#include <sex/detail/syscall.hpp>
+#include "syscall.hpp"
 #include <sex/util/fd_holder.hpp>
 
 #include <chrono>
