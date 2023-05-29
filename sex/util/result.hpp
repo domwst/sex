@@ -67,6 +67,10 @@ public:
     }
   }
 
+  Result<> discardValue() const {
+    return then([](auto) { return std::monostate{}; });
+  }
+
   static Result Ok(TResult result) {
     return Result(std::move(result));
   }
